@@ -683,7 +683,7 @@
     document.getElementById("totalNum").innerHTML = res.sum+'<span style="font-size:16px;color:var(--ink-soft)">/70</span>';
     var sub = document.getElementById("totalSub");
     if(!res.complete){
-      sub.textContent = "Score each area above to complete today's check-in.";
+      sub.textContent = "Score each area below to complete today's check-in.";
     } else if(res.sum>=35){
       sub.textContent = "35+ is often used as a reference point for acceptable day-to-day comfort — use this alongside how things feel, and your vet's guidance.";
     } else {
