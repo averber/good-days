@@ -194,6 +194,10 @@
     background:var(--rust);
     border-color:var(--rust);
   }
+  #litterCleanedChips .chip[data-cleaned="no"].on{
+    background:var(--rust);
+    border-color:var(--rust);
+  }
   .chip .sub{display:block; font-size:11px; font-weight:400; margin-top:1px;}
 
   .amount-input{
@@ -434,6 +438,13 @@
           </div>
         </div>
       </div>
+      <div class="cat-row" style="margin-top:16px; margin-bottom:0;">
+        <div class="catlabel"><span class="name">Litter box cleaned today?</span></div>
+        <div class="row-2" id="litterCleanedChips" style="margin-top:8px;">
+          <div class="chip" data-cleaned="yes">Yes</div>
+          <div class="chip" data-cleaned="no">No</div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -598,7 +609,7 @@
       hhhhhmm:h,
       overallGoodDay:null,
       food:{dry:false, wet:false, dryAmount:"", wetAmount:""},
-      litter:{poop:0, pee:0},
+      litter:{poop:0, pee:0, cleaned:null},
       vomited:false, vomitNote:"",
       meds:[],
       notes:""
@@ -683,7 +694,7 @@
     document.getElementById("totalNum").innerHTML = res.sum+'<span style="font-size:16px;color:var(--ink-soft)">/70</span>';
     var sub = document.getElementById("totalSub");
     if(!res.complete){
-      sub.textContent = "Score each area below to complete today's check-in.";
+      sub.textContent = "Score each area above to complete today's check-in.";
     } else if(res.sum>=35){
       sub.textContent = "35+ is often used as a reference point for acceptable day-to-day comfort — use this alongside how things feel, and your vet's guidance.";
     } else {
@@ -709,6 +720,11 @@
     var entry = getEntry(currentDate);
     document.getElementById("poopCount").textContent = entry.litter.poop;
     document.getElementById("peeCount").textContent = entry.litter.pee;
+    document.querySelectorAll("#litterCleanedChips .chip").forEach(function(chip){
+      var isYes = chip.dataset.cleaned === "yes";
+      var active = isYes ? entry.litter.cleaned === true : entry.litter.cleaned === false;
+      chip.classList.toggle("on", active);
+    });
   }
 
   function renderVomit(){
@@ -809,6 +825,16 @@
     });
   });
 
+  document.getElementById("litterCleanedChips").addEventListener("click", function(ev){
+    var chip = ev.target.closest(".chip");
+    if(!chip) return;
+    var e = ensureEntry(currentDate);
+    var val = chip.dataset.cleaned === "yes";
+    e.litter.cleaned = (e.litter.cleaned === val) ? null : val;
+    saveData();
+    renderLitter();
+  });
+
   document.getElementById("vomitSwitch").addEventListener("click", function(){
     var e = ensureEntry(currentDate);
     e.vomited = !e.vomited;
@@ -885,6 +911,8 @@
         if(entry.food.wet) bits.push("wet");
         if(entry.litter.poop) bits.push(entry.litter.poop+"× poop");
         if(entry.litter.pee) bits.push(entry.litter.pee+"× pee");
+        if(entry.litter.cleaned===true) bits.push("litter cleaned");
+        if(entry.litter.cleaned===false) bits.push("litter not cleaned");
         if(entry.vomited) bits.push("vomited");
         if(entry.meds.length) bits.push(entry.meds.length+" med"+(entry.meds.length>1?"s":""));
         card.innerHTML =
@@ -1030,7 +1058,7 @@
   });
 
   document.getElementById("exportBtn").addEventListener("click", function(){
-    var rows = [["Date","Total","Hurt","Hunger","Hydration","Hygiene","Happiness","Mobility","MoreGoodDays","OverallGoodDay","AteDry","DryAmount","AteWet","WetAmount","Poop","Pee","Vomited","VomitNote","Meds","Notes"]];
+    var rows = [["Date","Total","Hurt","Hunger","Hydration","Hygiene","Happiness","Mobility","MoreGoodDays","OverallGoodDay","AteDry","DryAmount","AteWet","WetAmount","Poop","Pee","LitterCleaned","Vomited","VomitNote","Meds","Notes"]];
     Object.keys(data.entries).sort().forEach(function(d){
       var e = data.entries[d];
       var res = computeTotal(e.hhhhhmm);
@@ -1040,7 +1068,9 @@
         e.hhhhhmm.happiness, e.hhhhhmm.mobility, e.hhhhhmm.good,
         e.overallGoodDay===true?"Yes":(e.overallGoodDay===false?"No":""),
         e.food.dry, e.food.dryAmount, e.food.wet, e.food.wetAmount,
-        e.litter.poop, e.litter.pee, e.vomited, e.vomitNote,
+        e.litter.poop, e.litter.pee,
+        e.litter.cleaned===true?"Yes":(e.litter.cleaned===false?"No":""),
+        e.vomited, e.vomitNote,
         e.meds.join("; "), e.notes
       ]);
     });
