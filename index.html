@@ -200,6 +200,31 @@
   }
   .chip .sub{display:block; font-size:11px; font-weight:400; margin-top:1px;}
 
+  .food-row{margin-bottom:16px;}
+  .food-label{font-size:13.5px; font-weight:700; margin-bottom:8px;}
+  .segmented{
+    display:flex;
+    background:var(--paper);
+    border-radius:14px;
+    padding:4px;
+    gap:4px;
+  }
+  .segmented button{
+    flex:1;
+    border:none;
+    background:none;
+    padding:10px 4px;
+    border-radius:11px;
+    font-family:'Nunito Sans', sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .segmented button.on[data-amt="none"]{background:var(--rust); color:#fff;}
+  .segmented button.on[data-amt="some"]{background:var(--amber); color:#fff;}
+  .segmented button.on[data-amt="all"]{background:var(--sage); color:#fff;}
+
   .amount-input{
     margin-top:8px;
     width:100%;
@@ -436,12 +461,22 @@
 
     <div class="card">
       <h2 class="sectiontitle">Food</h2>
-      <div class="row-2" id="foodChips">
-        <div class="chip" data-food="dry">Ate dry<span class="sub">tap if yes</span></div>
-        <div class="chip" data-food="wet">Ate wet<span class="sub">tap if yes</span></div>
+      <div class="food-row">
+        <div class="food-label">Dry food</div>
+        <div class="segmented" id="drySeg">
+          <button data-food="dry" data-amt="none">None</button>
+          <button data-food="dry" data-amt="some">Some</button>
+          <button data-food="dry" data-amt="all">All</button>
+        </div>
       </div>
-      <input class="amount-input" id="dryAmount" placeholder="How much dry? (optional)" style="display:none">
-      <input class="amount-input" id="wetAmount" placeholder="How much wet? (optional)" style="display:none">
+      <div class="food-row" style="margin-bottom:0;">
+        <div class="food-label">Wet food</div>
+        <div class="segmented" id="wetSeg">
+          <button data-food="wet" data-amt="none">None</button>
+          <button data-food="wet" data-amt="some">Some</button>
+          <button data-food="wet" data-amt="all">All</button>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -640,7 +675,7 @@
     return {
       hhhhhmm:h,
       overallGoodDay:null,
-      food:{dry:false, wet:false, dryAmount:"", wetAmount:""},
+      food:{dry:null, wet:null},
       litter:{poop:0, pee:0, cleaned:null},
       vomited:false, vomitNote:"",
       meds:[],
@@ -736,16 +771,12 @@
 
   function renderFood(){
     var entry = getEntry(currentDate);
-    document.querySelectorAll("#foodChips .chip").forEach(function(chip){
-      var k = chip.dataset.food;
-      chip.classList.toggle("on", !!entry.food[k]);
+    document.querySelectorAll("#drySeg button").forEach(function(btn){
+      btn.classList.toggle("on", entry.food.dry === btn.dataset.amt);
     });
-    var dryAmt = document.getElementById("dryAmount");
-    var wetAmt = document.getElementById("wetAmount");
-    dryAmt.style.display = entry.food.dry ? "block":"none";
-    wetAmt.style.display = entry.food.wet ? "block":"none";
-    dryAmt.value = entry.food.dryAmount || "";
-    wetAmt.value = entry.food.wetAmount || "";
+    document.querySelectorAll("#wetSeg button").forEach(function(btn){
+      btn.classList.toggle("on", entry.food.wet === btn.dataset.amt);
+    });
   }
 
   function renderLitter(){
@@ -831,21 +862,17 @@
     renderOverall();
   });
 
-  document.getElementById("foodChips").addEventListener("click", function(ev){
-    var chip = ev.target.closest(".chip");
-    if(!chip) return;
+  function handleFoodSegClick(ev){
+    var btn = ev.target.closest("button");
+    if(!btn) return;
     var e = ensureEntry(currentDate);
-    var k = chip.dataset.food;
-    e.food[k] = !e.food[k];
+    var k = btn.dataset.food, amt = btn.dataset.amt;
+    e.food[k] = (e.food[k] === amt) ? null : amt;
     saveData();
     renderFood();
-  });
-  document.getElementById("dryAmount").addEventListener("input", function(){
-    ensureEntry(currentDate).food.dryAmount = this.value; saveData();
-  });
-  document.getElementById("wetAmount").addEventListener("input", function(){
-    ensureEntry(currentDate).food.wetAmount = this.value; saveData();
-  });
+  }
+  document.getElementById("drySeg").addEventListener("click", handleFoodSegClick);
+  document.getElementById("wetSeg").addEventListener("click", handleFoodSegClick);
 
   document.querySelectorAll("[data-step]").forEach(function(btn){
     btn.addEventListener("click", function(){
@@ -947,8 +974,8 @@
         var bits = [];
         if(entry.overallGoodDay===true) bits.push("Good day");
         if(entry.overallGoodDay===false) bits.push("Rough day");
-        if(entry.food.dry) bits.push("dry");
-        if(entry.food.wet) bits.push("wet");
+        if(entry.food.dry) bits.push("dry: "+entry.food.dry);
+        if(entry.food.wet) bits.push("wet: "+entry.food.wet);
         if(entry.litter.poop) bits.push(entry.litter.poop+"× poop");
         if(entry.litter.pee) bits.push(entry.litter.pee+"× pee");
         if(entry.litter.cleaned===true) bits.push("litter cleaned");
@@ -1098,7 +1125,7 @@
   });
 
   document.getElementById("exportBtn").addEventListener("click", function(){
-    var rows = [["Date","Total","Hurt","Hunger","Hydration","Hygiene","Happiness","Mobility","MoreGoodDays","OverallGoodDay","AteDry","DryAmount","AteWet","WetAmount","Poop","Pee","LitterCleaned","Vomited","VomitNote","Meds","Notes"]];
+    var rows = [["Date","Total","Hurt","Hunger","Hydration","Hygiene","Happiness","Mobility","MoreGoodDays","OverallGoodDay","DryFood","WetFood","Poop","Pee","LitterCleaned","Vomited","VomitNote","Meds","Notes"]];
     Object.keys(data.entries).sort().forEach(function(d){
       var e = data.entries[d];
       var res = computeTotal(e.hhhhhmm);
@@ -1107,7 +1134,7 @@
         e.hhhhhmm.hurt, e.hhhhhmm.hunger, e.hhhhhmm.hydration, e.hhhhhmm.hygiene,
         e.hhhhhmm.happiness, e.hhhhhmm.mobility, e.hhhhhmm.good,
         e.overallGoodDay===true?"Yes":(e.overallGoodDay===false?"No":""),
-        e.food.dry, e.food.dryAmount, e.food.wet, e.food.wetAmount,
+        e.food.dry||"", e.food.wet||"",
         e.litter.poop, e.litter.pee,
         e.litter.cleaned===true?"Yes":(e.litter.cleaned===false?"No":""),
         e.vomited, e.vomitNote,
