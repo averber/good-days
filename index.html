@@ -2,752 +2,1098 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anna Verber - Senior Healthcare Product Leader</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Good Days — Ringo's Quality of Life</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root{
+    --nav-bottom-offset:40px;
+    --paper:#EDE6D8;
+    --card:#FBF8F2;
+    --ink:#2E2A24;
+    --ink-soft:#6B6355;
+    --amber:#C98A3B;
+    --sage:#7A8B6F;
+    --rust:#B5654A;
+    --line:#DCD3C0;
+    --shadow: 0 2px 10px rgba(46,42,36,0.08);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Nunito Sans', sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    padding-bottom:calc(78px + var(--nav-bottom-offset));
+  }
+  header.top{
+    padding:22px 20px 8px;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .brand svg{width:22px;height:22px;flex-shrink:0;}
+  h1.appname{
+    font-family:'Fraunces', serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:22px;
+    margin:0;
+    letter-spacing:0.2px;
+  }
+  .catname-row{
+    margin-top:2px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .datebar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin:14px 20px 6px;
+  }
+  .datebar button{
+    background:none;border:none;color:var(--ink-soft);
+    font-size:20px; padding:6px 10px; cursor:pointer; border-radius:8px;
+  }
+  .datebar button:hover{background:var(--line);}
+  .datebar .datelabel{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    font-weight:500;
+    min-width:150px;
+    text-align:center;
+    cursor:pointer;
+  }
+  #hiddenDate{position:absolute; opacity:0; width:1px; height:1px; pointer-events:none;}
 
-  :root {
-    --bg: #0f0f0d;
-    --bg2: #161612;
-    --bg3: #1d1d18;
-    --text: #e8e6df;
-    --muted: #8a8880;
-    --accent: #c9b99a;
-    --accent2: #7a9e8e;
-    --line: rgba(255,255,255,0.07);
-    --serif: 'Cormorant Garamond', Georgia, serif;
-    --sans: 'DM Sans', system-ui, sans-serif;
+  section.panel{padding:0 18px;}
+  .card{
+    background:var(--card);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:18px;
+    margin-bottom:16px;
   }
 
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
+  /* --- Gauge --- */
+  .gaugewrap{display:flex; flex-direction:column; align-items:center; padding:22px 0 14px;}
+  .gaugewrap .total-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:34px;
+    font-weight:500;
+    margin-top:-58px;
+  }
+  .gaugewrap .total-sub{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:14px;
+    text-align:center;
+    max-width:230px;
   }
 
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    padding: 1.5rem 3rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(15,15,13,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
+  /* --- Category rows --- */
+  .cat-row{margin-bottom:20px;}
+  .cat-row:last-child{margin-bottom:4px;}
+  .cat-row .catlabel{
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .cat-row .catlabel .name{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:15.5px;
+  }
+  .cat-row .catlabel .val{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px;
+    font-weight:500;
+    min-width:22px;
+    text-align:right;
+  }
+  .cat-row .desc{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:1px 0 8px;
+  }
+  input[type=range]{
+    -webkit-appearance:none; appearance:none;
+    width:100%;
+    height:26px;
+    background:transparent;
+    margin:0;
+  }
+  input[type=range]::-webkit-slider-runnable-track{
+    height:6px; border-radius:4px;
+    background:var(--line);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:26px;height:26px;
+    margin-top:-10px;
+    border-radius:50%;
+    background:var(--amber);
+    border:3px solid var(--card);
+    box-shadow:0 1px 4px rgba(46,42,36,0.35);
+    cursor:pointer;
+  }
+  input[type=range]::-moz-range-track{
+    height:6px;border-radius:4px;background:var(--line);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border:3px solid var(--card);
+    border-radius:50%; background:var(--amber); cursor:pointer;
   }
 
-  .nav-logo {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-size: 1.1rem;
-    letter-spacing: 0.08em;
-    color: var(--text);
-    text-decoration: none;
+  h2.sectiontitle{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:16px;
+    margin:0 0 12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  h2.sectiontitle svg{width:16px;height:16px;opacity:0.7;}
+
+  /* --- chips / toggles --- */
+  .row-2{display:flex; gap:10px;}
+  .chip{
+    flex:1;
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    border-radius:14px;
+    padding:12px 10px;
+    text-align:center;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    transition:all .15s;
+  }
+  .chip.on{
+    background:var(--sage);
+    border-color:var(--sage);
+    color:#fff;
+  }
+  #overallChips .chip[data-overall="no"].on{
+    background:var(--rust);
+    border-color:var(--rust);
+  }
+  .chip .sub{display:block; font-size:11px; font-weight:400; margin-top:1px;}
+
+  .amount-input{
+    margin-top:8px;
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:9px 10px;
+    font-family:'Nunito Sans',sans-serif;
+    font-size:13px;
+    background:#fff;
+  }
+  .amount-input:focus{outline:2px solid var(--amber); outline-offset:1px;}
+
+  .stepper-row{display:flex; gap:10px; margin-bottom:0;}
+  .stepper{
+    flex:1;
+    background:var(--paper);
+    border-radius:14px;
+    padding:10px 12px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .stepper .label{font-size:13.5px; font-weight:700;}
+  .stepper .ctrls{display:flex; align-items:center; gap:10px;}
+  .stepper button{
+    width:30px;height:30px;border-radius:50%;
+    border:none; background:var(--card); box-shadow:var(--shadow);
+    font-size:16px; font-weight:700; color:var(--ink); cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stepper .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px; min-width:16px; text-align:center;
   }
 
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
+  .vomit-toggle{
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .switch{
+    width:46px; height:26px; border-radius:14px; background:var(--line);
+    position:relative; cursor:pointer; transition:background .15s; flex-shrink:0;
+  }
+  .switch.on{background:var(--rust);}
+  .switch .knob{
+    width:20px;height:20px; border-radius:50%; background:#fff;
+    position:absolute; top:3px; left:3px; transition:left .15s;
+    box-shadow:0 1px 3px rgba(0,0,0,0.3);
+  }
+  .switch.on .knob{left:23px;}
+
+  textarea, .medinput{
+    width:100%;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:10px 12px;
+    font-family:'Nunito Sans',sans-serif;
+    font-size:13.5px;
+    background:#fff;
+    resize:vertical;
+  }
+  textarea:focus, .medinput:focus{outline:2px solid var(--amber); outline-offset:1px;}
+
+  .med-add-row{display:flex; gap:8px; margin-bottom:10px;}
+  .med-add-row .medinput{flex:1;}
+  .med-add-row button{
+    background:var(--amber); color:#fff; border:none; border-radius:12px;
+    padding:0 16px; font-weight:700; font-size:14px; cursor:pointer;
+  }
+  .med-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .med-tag{
+    background:var(--paper); border:1px solid var(--line);
+    border-radius:20px; padding:6px 8px 6px 12px;
+    font-size:13px; display:flex; align-items:center; gap:6px;
+  }
+  .med-tag button{
+    background:none; border:none; color:var(--ink-soft); font-size:15px;
+    cursor:pointer; line-height:1; padding:2px;
   }
 
-  .nav-links a {
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
+  /* --- history --- */
+  .day-card{
+    display:flex; align-items:center; gap:14px;
+    padding:14px; margin-bottom:10px;
+    background:var(--card); border-radius:16px; box-shadow:var(--shadow);
+    cursor:pointer;
+  }
+  .day-card .dot{
+    width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:14px;
+    color:#fff; flex-shrink:0;
+  }
+  .day-card .meta{flex:1; min-width:0;}
+  .day-card .metatop{font-family:'Fraunces',serif; font-weight:600; font-size:14.5px;}
+  .day-card .metabottom{font-size:12px; color:var(--ink-soft); margin-top:2px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .day-card .chev{color:var(--ink-soft); font-size:18px;}
+  .empty{
+    text-align:center; color:var(--ink-soft); font-size:13.5px;
+    padding:30px 10px;
   }
 
-  .nav-links a:hover { color: var(--text); }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 3rem 5rem;
-    position: relative;
-    overflow: hidden;
+  /* --- nav --- */
+  nav.tabbar{
+    position:fixed; bottom:var(--nav-bottom-offset, 0px); left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px;
+    background:var(--card);
+    border-top:1px solid var(--line);
+    display:flex;
+    padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+    z-index:1000010;
+    box-shadow:0 -2px 10px rgba(46,42,36,0.08);
   }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(122,158,142,0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(201,185,154,0.06) 0%, transparent 60%);
-    pointer-events: none;
+  nav.tabbar button{
+    flex:1;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; padding:6px 0;
+    color:var(--ink-soft); font-size:11px; font-weight:700;
+    cursor:pointer; border-radius:12px;
   }
+  nav.tabbar button svg{width:20px;height:20px;}
+  nav.tabbar button.active{color:var(--amber);}
 
-  .hero-eyebrow {
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 1.5rem;
+  .settings-field{margin-bottom:16px;}
+  .settings-field label{
+    display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft);
+    margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px;
   }
-
-  .hero-name {
-    font-family: var(--serif);
-    font-size: clamp(3.5rem, 8vw, 7rem);
-    font-weight: 300;
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    color: var(--text);
-    margin-bottom: 1rem;
+  .settings-field input[type=text]{
+    width:100%; border:1.5px solid var(--line); border-radius:12px;
+    padding:11px 12px; font-size:15px; font-family:'Nunito Sans',sans-serif;
+    background:#fff;
   }
-
-  .hero-name em {
-    font-style: italic;
-    color: var(--accent);
+  .btn-secondary{
+    width:100%; padding:12px; border-radius:12px; border:1.5px solid var(--line);
+    background:var(--paper); font-weight:700; font-size:14px; cursor:pointer;
+    color:var(--ink); margin-bottom:10px;
   }
-
-  .hero-sub {
-    font-size: 1rem;
-    color: var(--muted);
-    max-width: 480px;
-    margin-bottom: 3rem;
-    font-weight: 300;
-    line-height: 1.8;
+  .btn-danger{
+    width:100%; padding:12px; border-radius:12px; border:1.5px solid var(--rust);
+    background:none; font-weight:700; font-size:14px; cursor:pointer; color:var(--rust);
   }
-
-  .hero-ctas {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-  }
-
-  .btn-primary {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    background: var(--accent);
-    color: var(--bg);
-    font-family: var(--sans);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border: none;
-    transition: background 0.2s, transform 0.15s;
-  }
-
-  .btn-primary:hover { background: #d4c5ad; transform: translateY(-1px); }
-
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .btn-ghost:hover { color: var(--text); }
-
-  .btn-ghost::after {
-    content: '↗';
-    font-size: 0.9rem;
-    transition: transform 0.2s;
-  }
-
-  .btn-ghost:hover::after { transform: translate(2px, -2px); }
-
-  /* SECTIONS */
-  section {
-    padding: 6rem 3rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .section-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 3rem;
-  }
-
-  /* ABOUT */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: start;
-  }
-
-  .about-heading {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 300;
-    line-height: 1.2;
-    color: var(--text);
-    margin-bottom: 2rem;
-  }
-
-  .about-heading em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .about-body {
-    color: var(--muted);
-    line-height: 1.9;
-    font-size: 0.95rem;
-  }
-
-  .about-body p + p { margin-top: 1.2rem; }
-
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-
-  .stat {
-    border-left: 1px solid var(--accent);
-    padding-left: 1.25rem;
-  }
-
-  .stat-num {
-    font-family: var(--serif);
-    font-size: 2.2rem;
-    font-weight: 300;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 0.4rem;
-  }
-
-  .stat-label {
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    line-height: 1.5;
-  }
-
-  /* EXPERIENCE */
-  .experience-list { max-width: 720px; }
-
-  .exp-item {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 2rem;
-    padding: 2.5rem 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .exp-item:last-child { border-bottom: none; }
-
-  .exp-meta {
-    padding-top: 0.25rem;
-  }
-
-  .exp-period {
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  .exp-company {
-    font-size: 0.72rem;
-    letter-spacing: 0.05em;
-    color: var(--accent);
-    margin-top: 0.5rem;
-  }
-
-  .exp-title {
-    font-family: var(--serif);
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: var(--text);
-    line-height: 1.3;
-    margin-bottom: 0.75rem;
-  }
-
-  .exp-body {
-    font-size: 0.88rem;
-    color: var(--muted);
-    line-height: 1.85;
-  }
-
-  .exp-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-  }
-
-  .tag {
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.3rem 0.75rem;
-    border: 1px solid var(--line);
-    color: var(--muted);
-  }
-
-  /* SKILLS */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    max-width: 900px;
-  }
-
-  .skill-group-title {
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 1rem;
-  }
-
-  .skill-list {
-    list-style: none;
-  }
-
-  .skill-list li {
-    font-size: 0.88rem;
-    color: var(--muted);
-    padding: 0.45rem 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .skill-list li:last-child { border-bottom: none; }
-
-  /* EDUCATION */
-  .edu-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    max-width: 800px;
-  }
-
-  .edu-card {
-    background: var(--bg2);
-    border: 1px solid var(--line);
-    padding: 2rem;
-  }
-
-  .edu-degree {
-    font-family: var(--serif);
-    font-size: 1.3rem;
-    font-weight: 300;
-    color: var(--text);
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
-  }
-
-  .edu-school {
-    font-size: 0.8rem;
-    color: var(--accent2);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.75rem;
-  }
-
-  .edu-detail {
-    font-size: 0.8rem;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  /* CERTIFICATIONS */
-  .cert-list {
-    list-style: none;
-    max-width: 640px;
-  }
-
-  .cert-list li {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
-  .cert-list li::before {
-    content: '—';
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-
-  /* CONTACT */
-  .contact-inner {
-    max-width: 600px;
-  }
-
-  .contact-heading {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 300;
-    line-height: 1.2;
-    color: var(--text);
-    margin-bottom: 1.5rem;
-  }
-
-  .contact-heading em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .contact-links {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 2.5rem;
-  }
-
-  .contact-link {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.85rem;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .contact-link:hover { color: var(--text); }
-
-  .contact-link-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--accent);
-    width: 80px;
-    flex-shrink: 0;
-  }
-
-  .contact-link-arrow {
-    margin-left: auto;
-    font-size: 0.9rem;
-    transition: transform 0.2s;
-  }
-
-  .contact-link:hover .contact-link-arrow { transform: translate(3px, -3px); }
-
-  /* FOOTER */
-  footer {
-    padding: 2rem 3rem;
-    border-top: 1px solid var(--line);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-name {
-    font-family: var(--serif);
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
-  .footer-copy {
-    font-size: 0.75rem;
-    color: #3a3a35;
-  }
-
-  /* FADE IN */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-
-  .fade-in.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    nav { padding: 1.25rem 1.5rem; }
-    .nav-links { display: none; }
-    .hero { padding: 0 1.5rem 4rem; }
-    section { padding: 4rem 1.5rem; }
-    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
-    .skills-grid { grid-template-columns: 1fr 1fr; }
-    .edu-grid { grid-template-columns: 1fr; }
-    .stat-grid { grid-template-columns: 1fr 1fr; }
-    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
-  }
+  .hint{font-size:12px; color:var(--ink-soft); line-height:1.5;}
+  .view{display:none;}
+  .view.active{display:block;}
+  ::selection{background:var(--amber); color:#fff;}
 </style>
 </head>
 <body>
+<div id="app">
 
-<nav>
-  <a href="#" class="nav-logo">Anna Verber</a>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="#C98A3B">
+        <ellipse cx="12" cy="15.5" rx="5" ry="4.2"/>
+        <ellipse cx="5.2" cy="9.6" rx="2" ry="2.6"/>
+        <ellipse cx="9.6" cy="5.8" rx="1.9" ry="2.5"/>
+        <ellipse cx="14.4" cy="5.8" rx="1.9" ry="2.5"/>
+        <ellipse cx="18.8" cy="9.6" rx="2" ry="2.6"/>
+      </svg>
+      <h1 class="appname">Good Days</h1>
+    </div>
+    <div class="catname-row" id="catNameHeader">for our sweet baby boy, Ringo</div>
+  </header>
 
-<!-- HERO -->
-<section class="hero">
-  <p class="hero-eyebrow">Senior Experience Product Manager — Abbott</p>
-  <h1 class="hero-name">Anna<br><em>Verber</em></h1>
-  <p class="hero-sub">Building healthcare products that meet people in their most critical moments — from cancer diagnostics to pharmacy care. CSPO · MBA, University of Wisconsin · Madison, WI</p>
-  <div class="hero-ctas">
-    <a href="#contact" class="btn-primary">Get in touch</a>
-    <a href="https://www.linkedin.com/in/anna-verber-624620112/" target="_blank" class="btn-ghost">LinkedIn</a>
+  <div class="datebar">
+    <button id="prevDay" aria-label="Previous day">‹</button>
+    <div class="datelabel" id="dateLabel">Today</div>
+    <button id="nextDay" aria-label="Next day">›</button>
+    <input type="date" id="hiddenDate">
   </div>
-</section>
 
-<!-- ABOUT -->
-<section id="about">
-  <p class="section-label">About</p>
-  <div class="about-grid">
-    <div>
-      <h2 class="about-heading">Bridging <em>strategy</em> and execution in health tech</h2>
-      <div class="about-body">
-        <p>Product manager with a track record of launching and scaling complex software in healthcare — from leading Epic EHR implementations for health systems to pharmacy management platforms and copay assistance products — with a relentless focus on outcomes that matter for both users and the bottom line.</p>
-        <p>Currently at Abbott, designing an empathetic patient experience within the MyChart portal for people navigating cancer diagnostics — work that sits at the intersection of product craft, clinical context, and human compassion.</p>
-        <p>MBA graduate from the Wisconsin School of Business, with a focus on AI, data analytics, financial insight, and strategic innovation.</p>
+  <!-- TODAY VIEW -->
+  <section class="panel view active" id="view-today">
+
+    <div class="card">
+      <div class="gaugewrap">
+        <svg viewBox="0 0 220 120" width="220" height="120">
+          <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="var(--line)" stroke-width="14" stroke-linecap="round"/>
+          <path id="gaugeArc" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="var(--amber)" stroke-width="14" stroke-linecap="round"
+                stroke-dasharray="0 283"/>
+          <line x1="110" y1="16" x2="110" y2="30" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="2 2"/>
+        </svg>
+        <div class="total-num" id="totalNum">0<span style="font-size:16px;color:var(--ink-soft)">/70</span></div>
+        <div class="total-sub" id="totalSub">Score each area below to see today's total.</div>
       </div>
     </div>
-    <div>
-      <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-num">88%</div>
-          <div class="stat-label">hourly throughput increase per technician within 180 days of pharmacy management platform go-live — nearly doubling productivity through continuous user feedback and rapid iteration</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">$36M</div>
-          <div class="stat-label">gross revenue product portfolio managed at a national PBM, delivering 4:1 ROI and 10–25% annual savings for clients on copay assistance programs</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">75%</div>
-          <div class="stat-label">reduction in manual workflows supporting claims adjudication, achieved through strategic process automation and RPA — freeing teams to focus on higher-value work</div>
-        </div>
-        <div class="stat">
-          <div class="stat-num">8</div>
-          <div class="stat-label">nationwide pharmacies launched on a custom cloud-based pharmacy management platform — Lumicera's most complex and consequential initiative to date</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- EXPERIENCE -->
-<section id="experience">
-  <p class="section-label">Experience</p>
-  <div class="experience-list">
-
-    <div class="exp-item fade-in">
-      <div class="exp-meta">
-        <div class="exp-period">2026 — Present</div>
-        <div class="exp-company">Abbott</div>
-      </div>
-      <div>
-        <h3 class="exp-title">Senior Experience Product Manager</h3>
-        <p class="exp-body">Managing Abbott's MyChart patient portal for the Cancer Diagnostics division that has served over 20 million patients across screening, diagnostics, hereditary risk, monitoring, and treatment guidance. Designing a tailored, empathetic experience that meets patients with clarity at every step of a high-stakes and deeply personal journey.</p>
-        <div class="exp-tags">
-          <span class="tag">MyChart</span>
-          <span class="tag">Patient Experience</span>
-          <span class="tag">Cancer Diagnostics</span>
-          <span class="tag">UX Strategy</span>
-          <span class="tag">Healthcare Tech</span>
+    <div class="card">
+      <h2 class="sectiontitle">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <ellipse cx="12" cy="15.5" rx="5" ry="4.2"/>
+          <ellipse cx="5.2" cy="9.6" rx="2" ry="2.6"/>
+          <ellipse cx="9.6" cy="5.8" rx="1.9" ry="2.5"/>
+          <ellipse cx="14.4" cy="5.8" rx="1.9" ry="2.5"/>
+          <ellipse cx="18.8" cy="9.6" rx="2" ry="2.6"/>
+        </svg>
+        How is Ringo doing today?
+      </h2>
+      <div id="catRows"></div>
+      <div class="cat-row" style="margin-top:4px; margin-bottom:0;">
+        <div class="catlabel"><span class="name">Overall, was today a good day?</span></div>
+        <div class="desc">Your own read on the day, separate from the scores above.</div>
+        <div class="row-2" id="overallChips">
+          <div class="chip" data-overall="yes">Yes</div>
+          <div class="chip" data-overall="no">No</div>
         </div>
       </div>
     </div>
 
-    <div class="exp-item fade-in">
-      <div class="exp-meta">
-        <div class="exp-period">2025 — 2026</div>
-        <div class="exp-company">Navitus / Lumicera</div>
+    <div class="card">
+      <h2 class="sectiontitle">Food</h2>
+      <div class="row-2" id="foodChips">
+        <div class="chip" data-food="dry">Ate dry<span class="sub">tap if yes</span></div>
+        <div class="chip" data-food="wet">Ate wet<span class="sub">tap if yes</span></div>
       </div>
-      <div>
-        <h3 class="exp-title">Product Owner</h3>
-        <p class="exp-body">Spearheaded Lumicera's largest-ever initiative — a custom cloud-based pharmacy management platform — deployed across 8 nationwide pharmacies. Improved operational efficiency ~40% within 90 days of release; achieved 88% revenue increase per technician by 180 days. Led a distributed Agile team as both Product Owner and Scrum Master, driving 10+ releases with zero system downtime.</p>
-        <div class="exp-tags">
-          <span class="tag">Agile / Scrum</span>
-          <span class="tag">Cloud Platform</span>
-          <span class="tag">UAT</span>
-          <span class="tag">Azure DevOps</span>
+      <input class="amount-input" id="dryAmount" placeholder="How much dry? (optional)" style="display:none">
+      <input class="amount-input" id="wetAmount" placeholder="How much wet? (optional)" style="display:none">
+    </div>
+
+    <div class="card">
+      <h2 class="sectiontitle">Litter box</h2>
+      <div class="stepper-row">
+        <div class="stepper">
+          <span class="label">Pooped</span>
+          <div class="ctrls">
+            <button data-step="poop" data-dir="-1">−</button>
+            <span class="count" id="poopCount">0</span>
+            <button data-step="poop" data-dir="1">+</button>
+          </div>
         </div>
-        <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--line);display:grid;grid-template-columns:140px 1fr;gap:2rem;">
-          <div class="exp-period">2023 — 2025</div>
-          <div>
-            <h3 class="exp-title">Associate Product Manager</h3>
-            <p class="exp-body">Managed a portfolio of copay assistance products generating $36M in gross revenue. Reduced manual workflows 50–75% through robotic process automation and Qlik analytics. Launched a new weight-loss management product offering 10–15% savings to pilot clients.</p>
-            <div class="exp-tags">
-              <span class="tag">Product Portfolio</span>
-              <span class="tag">Qlik</span>
-              <span class="tag">RPA</span>
-              <span class="tag">Client Strategy</span>
-            </div>
+        <div class="stepper">
+          <span class="label">Peed</span>
+          <div class="ctrls">
+            <button data-step="pee" data-dir="-1">−</button>
+            <span class="count" id="peeCount">0</span>
+            <button data-step="pee" data-dir="1">+</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="exp-item fade-in">
-      <div class="exp-meta">
-        <div class="exp-period">2021 — 2023</div>
-        <div class="exp-company">Epic Systems</div>
+    <div class="card">
+      <h2 class="sectiontitle">Vomiting</h2>
+      <div class="vomit-toggle">
+        <span style="font-size:14px;">Vomited today</span>
+        <div class="switch" id="vomitSwitch"><div class="knob"></div></div>
       </div>
-      <div>
-        <h3 class="exp-title">Trainer & Implementation Manager</h3>
-        <p class="exp-body">Earned a 9.5/10 trainer feedback score — above the company average — while simultaneously managing go-live project support for 5+ health systems and leading quarterly curriculum upgrades for a 60+ person team. Served as lead implementation manager on two successful add-on installs, and built a mentorship program that eased the trainer-to-project-manager transition for new hires joining customer installs.</p>
-        <div class="exp-tags">
-          <span class="tag">Epic EHR</span>
-          <span class="tag">Implementation</span>
-          <span class="tag">Training</span>
-          <span class="tag">Project Management</span>
-        </div>
+      <input class="amount-input" id="vomitNote" placeholder="Note (optional) — e.g. hairball, after eating fast" style="display:none; margin-top:10px;">
+    </div>
+
+    <div class="card">
+      <h2 class="sectiontitle">Medications given</h2>
+      <div class="med-add-row">
+        <input class="medinput" id="medInput" list="medHistoryList" placeholder="Med name + dose, e.g. Gabapentin 50mg">
+        <datalist id="medHistoryList"></datalist>
+        <button id="addMedBtn">Add</button>
+      </div>
+      <div class="med-tags" id="medTags"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="sectiontitle">Notes</h2>
+      <textarea id="notesField" rows="3" placeholder="Anything else worth remembering about today..."></textarea>
+    </div>
+
+  </section>
+
+  <!-- HISTORY VIEW -->
+  <section class="panel view" id="view-history">
+    <div class="card">
+      <h2 class="sectiontitle">Trend</h2>
+      <svg id="trendChart" viewBox="0 0 320 160" width="100%" height="160"></svg>
+      <div style="display:flex; gap:16px; justify-content:center; margin:8px 0 4px; font-size:11px; color:var(--ink-soft);">
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#7A8B6F;margin-right:5px;"></span>Good day</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B5654A;margin-right:5px;"></span>Rough day</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#C98A3B;margin-right:5px;"></span>Not answered</span>
+      </div>
+      <div class="hint">Dashed line marks 35/70 — a commonly used reference point. What matters most is the direction of the trend over time, and how it feels day to day — this isn't a verdict on its own.</div>
+    </div>
+    <div class="card" style="padding-bottom:6px;">
+      <h2 class="sectiontitle">Daily log</h2>
+      <div id="historyList"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS VIEW -->
+  <section class="panel view" id="view-settings">
+    <div class="card">
+      <h2 class="sectiontitle">Your cat</h2>
+      <div class="settings-field">
+        <label>Name</label>
+        <input type="text" id="settingsCatName" placeholder="Cat's name">
+      </div>
+      <div class="hint">Saved automatically on this device.</div>
+    </div>
+    <div class="card">
+      <h2 class="sectiontitle">Sync between phones</h2>
+      <div class="settings-field">
+        <label>Shared database URL</label>
+        <input type="text" id="syncUrlInput" placeholder="https://your-project-default-rtdb.firebaseio.com">
+      </div>
+      <button class="btn-secondary" id="syncConnectBtn">Connect &amp; sync</button>
+      <button class="btn-secondary" id="syncNowBtn" style="display:none;">Sync now</button>
+      <div class="hint" id="syncStatus">Not connected — entries stay on this device only.</div>
+      <div class="hint" style="margin-top:10px;">
+        To share this log with your husband, set up one free shared database and enter the same URL on both phones:<br><br>
+        1. Go to console.firebase.google.com and create a free project.<br>
+        2. Open Build → Realtime Database → Create Database → start in test mode.<br>
+        3. In the Rules tab, set both <code>.read</code> and <code>.write</code> to <code>true</code>, then publish (so it doesn't expire in 30 days).<br>
+        4. Copy the database URL shown on that page and paste it above, on both phones.<br><br>
+        Once connected, entries sync automatically every ~20 seconds, and right away when you tap "Sync now." Anyone with the URL could read or write to it, so don't share it beyond your household.
       </div>
     </div>
-
-    <div class="exp-item fade-in">
-      <div class="exp-meta">
-        <div class="exp-period">2020 — 2021</div>
-        <div class="exp-company">Navitus / Lumicera</div>
-      </div>
-      <div>
-        <h3 class="exp-title">Product Operations Specialist</h3>
-        <p class="exp-body">Helped launch and manage daily operations of a new specialty pharmacy insurance product delivering 40–60% savings for clients. Developed client-specific processes from the ground up, generating $2.2M in savings in 2021 alone.</p>
-        <div class="exp-tags">
-          <span class="tag">Operations</span>
-          <span class="tag">Dynamics CRM</span>
-          <span class="tag">Pharmacy</span>
-        </div>
+    <div class="card">
+      <h2 class="sectiontitle">Your data</h2>
+      <button class="btn-secondary" id="exportBtn">Export as CSV</button>
+      <button class="btn-danger" id="clearBtn">Delete all data</button>
+      <div class="hint" style="margin-top:12px;">Everything is stored privately in this browser, on this device only — nothing is sent anywhere, unless you connect sync above. If you clear your browser data or switch devices without syncing, this log won't carry over unless you export it first.</div>
+    </div>
+    <div class="card">
+      <h2 class="sectiontitle">About this scale</h2>
+      <div class="hint">
+        HHHHHMM (Hurt, Hunger, Hydration, Hygiene, Happiness, Mobility, More good days than bad) is a veterinary quality-of-life framework popularized by Dr. Alice Villalobos, used to support — not replace — conversations with your vet.
       </div>
     </div>
+  </section>
 
-  </div>
-</section>
+  <nav class="tabbar">
+    <button class="tab-btn active" data-view="today">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <ellipse cx="12" cy="15.5" rx="5" ry="4.2"/>
+        <ellipse cx="5.2" cy="9.6" rx="2" ry="2.6"/>
+        <ellipse cx="9.6" cy="5.8" rx="1.9" ry="2.5"/>
+        <ellipse cx="14.4" cy="5.8" rx="1.9" ry="2.5"/>
+        <ellipse cx="18.8" cy="9.6" rx="2" ry="2.6"/>
+      </svg>
+      Today
+    </button>
+    <button class="tab-btn" data-view="history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V9M12 19V5M20 19v-7"/></svg>
+      History
+    </button>
+    <button class="tab-btn" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+      Settings
+    </button>
+  </nav>
 
-<!-- SKILLS -->
-<section id="skills">
-  <p class="section-label">Skills & Certifications</p>
-  <div class="skills-grid fade-in">
-    <div>
-      <p class="skill-group-title">Product & Methodology</p>
-      <ul class="skill-list">
-        <li>Scaled Agile Framework (SAFe)</li>
-        <li>Scrum / Sprint Planning</li>
-        <li>Backlog Refinement</li>
-        <li>Software Development Life Cycle</li>
-        <li>User Acceptance Testing</li>
-        <li>Product Strategy & Roadmapping</li>
-      </ul>
-    </div>
-    <div>
-      <p class="skill-group-title">Tools & Platforms</p>
-      <ul class="skill-list">
-        <li>Jira</li>
-        <li>Azure Microsoft DevOps</li>
-        <li>Microsoft Dynamics CRM</li>
-        <li>Epic EHR</li>
-        <li>Qliksense / Qlikview</li>
-        <li>Tableau</li>
-        <li>Microsoft Excel (Advanced)</li>
-      </ul>
-    </div>
-    <div>
-      <p class="skill-group-title">Certifications</p>
-      <ul class="skill-list">
-        <li>Scrum Alliance CSPO</li>
-        <li>Product Management Basics — Pendo.io</li>
-        <li>Excel Proficiency — Wisconsin School of Business</li>
-        <li>Google Cloud Generative AI Leader</li>
-      </ul>
-      <p class="skill-group-title" style="margin-top: 2rem;">AI Fluency</p>
-      <ul class="skill-list">
-        <li>AI Strategy & Enterprise Readiness</li>
-        <li>AI Governance & Ethics</li>
-        <li>Responsible AI Adoption</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- EDUCATION -->
-<section>
-  <p class="section-label">Education</p>
-  <div class="edu-grid fade-in">
-    <div class="edu-card">
-      <h3 class="edu-degree">MBA</h3>
-      <p class="edu-school">University of Wisconsin — Madison</p>
-      <p class="edu-detail">Graduated 2026<br>Focus: Financial Insight · Strategic Innovation · Artificial Intelligence · Data Analytics · Business Analytics</p>
-    </div>
-    <div class="edu-card">
-      <h3 class="edu-degree">B.A., Communication Science & Rhetorical Studies</h3>
-      <p class="edu-school">University of Wisconsin — Madison</p>
-      <p class="edu-detail">Minor: Gender & Women's Studies</p>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="contact-inner">
-    <p class="section-label">Contact</p>
-    <h2 class="contact-heading">Let's build something <em>meaningful</em></h2>
-    <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8;">Open to conversations about product leadership, healthcare technology, and the intersection of AI and human-centered design.</p>
-    <div class="contact-links">
-      <a href="mailto:annacblasco@gmail.com" class="contact-link">
-        <span class="contact-link-label">Email</span>
-        annacblasco@gmail.com
-        <span class="contact-link-arrow">↗</span>
-      </a>
-      <a href="https://www.linkedin.com/in/anna-verber-624620112/" target="_blank" class="contact-link">
-        <span class="contact-link-label">LinkedIn</span>
-        Anna Verber
-        <span class="contact-link-arrow">↗</span>
-      </a>
-      <a href="#" class="contact-link">
-        <span class="contact-link-label">Location</span>
-        Madison, WI
-      </a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <span class="footer-name">Anna Verber</span>
-  <span class="footer-copy">© 2026</span>
-</footer>
+</div>
 
 <script>
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 80);
-        observer.unobserve(entry.target);
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "cat-qol-v1";
+  var CATS = [
+    {key:"hurt", label:"Hurt", desc:"Pain is well controlled, including easy breathing"},
+    {key:"hunger", label:"Hunger", desc:"Eating enough, with help if needed"},
+    {key:"hydration", label:"Hydration", desc:"Getting enough fluids"},
+    {key:"hygiene", label:"Hygiene", desc:"Clean, brushed, free of sores"},
+    {key:"happiness", label:"Happiness", desc:"Curious, responsive, engaged with you"},
+    {key:"mobility", label:"Mobility", desc:"Gets up, walks, and reaches the litter box"},
+    {key:"good", label:"More Good Days", desc:"Good days are outnumbering the hard ones"}
+  ];
+
+  function todayStr(){ return fmt(new Date()); }
+  function fmt(d){
+    var y=d.getFullYear(), m=("0"+(d.getMonth()+1)).slice(-2), day=("0"+d.getDate()).slice(-2);
+    return y+"-"+m+"-"+day;
+  }
+  function parseDate(s){ var p=s.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+  function niceDate(s){
+    var d = parseDate(s);
+    var t = todayStr(), y = fmt(new Date(Date.now()-86400000));
+    if(s===t) return "Today";
+    if(s===y) return "Yesterday";
+    return d.toLocaleDateString(undefined, {month:"short", day:"numeric", year: (d.getFullYear()!==new Date().getFullYear()? "numeric": undefined)});
+  }
+
+  function loadData(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){}
+    return {catName:"Ringo", entries:{}, medHistory:[], updatedAt:0};
+  }
+  var pushTimer = null;
+  function saveData(){
+    data.updatedAt = Date.now();
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+    if(syncUrl){
+      clearTimeout(pushTimer);
+      pushTimer = setTimeout(cloudPush, 900);
+    }
+  }
+
+  function defaultEntry(){
+    var h={};
+    CATS.forEach(function(c){ h[c.key]=null; });
+    return {
+      hhhhhmm:h,
+      overallGoodDay:null,
+      food:{dry:false, wet:false, dryAmount:"", wetAmount:""},
+      litter:{poop:0, pee:0},
+      vomited:false, vomitNote:"",
+      meds:[],
+      notes:""
+    };
+  }
+  function getEntry(dateStr){
+    return data.entries[dateStr] || defaultEntry();
+  }
+  function ensureEntry(dateStr){
+    if(!data.entries[dateStr]) data.entries[dateStr] = defaultEntry();
+    return data.entries[dateStr];
+  }
+
+  var data = loadData();
+  var currentDate = todayStr();
+  var currentView = "today";
+
+  var SYNC_KEY = "cat-qol-sync-url";
+  var syncUrl = "";
+  try{ syncUrl = localStorage.getItem(SYNC_KEY) || ""; }catch(e){}
+
+  function scoreColor(v){
+    if(v===null || v===undefined) return "#DCD3C0";
+    var rust=[181,101,74], amber=[201,138,59], sage=[122,139,111];
+    var c;
+    if(v<=5){ var t=v/5; c=lerp(rust,amber,t); } else { var t2=(v-5)/5; c=lerp(amber,sage,t2); }
+    return "rgb("+c[0]+","+c[1]+","+c[2]+")";
+  }
+  function lerp(a,b,t){ return [Math.round(a[0]+(b[0]-a[0])*t), Math.round(a[1]+(b[1]-a[1])*t), Math.round(a[2]+(b[2]-a[2])*t)]; }
+
+  function computeTotal(h){
+    var sum=0, count=0;
+    CATS.forEach(function(c){ if(h[c.key]!==null && h[c.key]!==undefined){ sum+=h[c.key]; count++; } });
+    return {sum:sum, complete: count===CATS.length};
+  }
+
+  /* ---------- rendering: header / date ---------- */
+  function renderHeader(){
+    document.getElementById("catNameHeader").textContent = data.catName ? "for our sweet baby boy, "+data.catName : "for our sweet baby boy";
+    document.getElementById("settingsCatName").value = data.catName || "";
+    document.getElementById("dateLabel").textContent = niceDate(currentDate);
+    document.getElementById("hiddenDate").value = currentDate;
+    document.getElementById("nextDay").disabled = currentDate >= todayStr();
+    document.getElementById("nextDay").style.opacity = currentDate >= todayStr() ? 0.3 : 1;
+  }
+
+  /* ---------- rendering: today ---------- */
+  function renderCatRows(){
+    var entry = getEntry(currentDate);
+    var wrap = document.getElementById("catRows");
+    wrap.innerHTML = "";
+    CATS.forEach(function(c){
+      var v = entry.hhhhhmm[c.key];
+      var row = document.createElement("div");
+      row.className = "cat-row";
+      row.innerHTML =
+        '<div class="catlabel"><span class="name">'+c.label+'</span><span class="val" style="color:'+scoreColor(v)+'">'+(v===null?"—":v)+'</span></div>'+
+        '<div class="desc">'+c.desc+'</div>'+
+        '<input type="range" min="0" max="10" step="1" value="'+(v===null?5:v)+'" data-cat="'+c.key+'">';
+      wrap.appendChild(row);
+    });
+    wrap.querySelectorAll("input[type=range]").forEach(function(inp){
+      inp.addEventListener("input", function(){
+        var e = ensureEntry(currentDate);
+        e.hhhhhmm[inp.dataset.cat] = parseInt(inp.value,10);
+        saveData();
+        renderCatRows();
+        renderGauge();
+      });
+    });
+  }
+
+  function renderGauge(){
+    var entry = getEntry(currentDate);
+    var res = computeTotal(entry.hhhhhmm);
+    var circumference = 283; // approx length of the semicircle path
+    var frac = res.sum/70;
+    var arc = document.getElementById("gaugeArc");
+    arc.setAttribute("stroke-dasharray", (circumference*frac)+" "+circumference);
+    var color = res.sum>=35 ? "#7A8B6F" : (res.sum>=25 ? "#C98A3B" : "#B5654A");
+    arc.setAttribute("stroke", color);
+    document.getElementById("totalNum").innerHTML = res.sum+'<span style="font-size:16px;color:var(--ink-soft)">/70</span>';
+    var sub = document.getElementById("totalSub");
+    if(!res.complete){
+      sub.textContent = "Score each area above to complete today's check-in.";
+    } else if(res.sum>=35){
+      sub.textContent = "35+ is often used as a reference point for acceptable day-to-day comfort — use this alongside how things feel, and your vet's guidance.";
+    } else {
+      sub.textContent = "Below the common 35-point reference point. Worth discussing with your vet, especially if this continues.";
+    }
+  }
+
+  function renderFood(){
+    var entry = getEntry(currentDate);
+    document.querySelectorAll("#foodChips .chip").forEach(function(chip){
+      var k = chip.dataset.food;
+      chip.classList.toggle("on", !!entry.food[k]);
+    });
+    var dryAmt = document.getElementById("dryAmount");
+    var wetAmt = document.getElementById("wetAmount");
+    dryAmt.style.display = entry.food.dry ? "block":"none";
+    wetAmt.style.display = entry.food.wet ? "block":"none";
+    dryAmt.value = entry.food.dryAmount || "";
+    wetAmt.value = entry.food.wetAmount || "";
+  }
+
+  function renderLitter(){
+    var entry = getEntry(currentDate);
+    document.getElementById("poopCount").textContent = entry.litter.poop;
+    document.getElementById("peeCount").textContent = entry.litter.pee;
+  }
+
+  function renderVomit(){
+    var entry = getEntry(currentDate);
+    document.getElementById("vomitSwitch").classList.toggle("on", !!entry.vomited);
+    var note = document.getElementById("vomitNote");
+    note.style.display = entry.vomited ? "block":"none";
+    note.value = entry.vomitNote || "";
+  }
+
+  function renderMeds(){
+    var entry = getEntry(currentDate);
+    var wrap = document.getElementById("medTags");
+    wrap.innerHTML = "";
+    entry.meds.forEach(function(m, i){
+      var tag = document.createElement("div");
+      tag.className = "med-tag";
+      tag.innerHTML = '<span></span><button data-i="'+i+'">×</button>';
+      tag.querySelector("span").textContent = m;
+      wrap.appendChild(tag);
+    });
+    wrap.querySelectorAll("button").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var e = ensureEntry(currentDate);
+        e.meds.splice(parseInt(btn.dataset.i,10),1);
+        saveData();
+        renderMeds();
+      });
+    });
+    var list = document.getElementById("medHistoryList");
+    list.innerHTML = "";
+    (data.medHistory||[]).forEach(function(m){
+      var opt = document.createElement("option");
+      opt.value = m;
+      list.appendChild(opt);
+    });
+  }
+
+  function renderNotes(){
+    document.getElementById("notesField").value = getEntry(currentDate).notes || "";
+  }
+
+  function renderOverall(){
+    var entry = getEntry(currentDate);
+    document.querySelectorAll("#overallChips .chip").forEach(function(chip){
+      var isYes = chip.dataset.overall === "yes";
+      var active = isYes ? entry.overallGoodDay === true : entry.overallGoodDay === false;
+      chip.classList.toggle("on", active);
+    });
+  }
+
+  function renderToday(){
+    renderHeader();
+    renderCatRows();
+    renderGauge();
+    renderOverall();
+    renderFood();
+    renderLitter();
+    renderVomit();
+    renderMeds();
+    renderNotes();
+  }
+
+  /* ---------- events: today ---------- */
+  document.getElementById("overallChips").addEventListener("click", function(ev){
+    var chip = ev.target.closest(".chip");
+    if(!chip) return;
+    var e = ensureEntry(currentDate);
+    var val = chip.dataset.overall === "yes";
+    e.overallGoodDay = (e.overallGoodDay === val) ? null : val;
+    saveData();
+    renderOverall();
+  });
+
+  document.getElementById("foodChips").addEventListener("click", function(ev){
+    var chip = ev.target.closest(".chip");
+    if(!chip) return;
+    var e = ensureEntry(currentDate);
+    var k = chip.dataset.food;
+    e.food[k] = !e.food[k];
+    saveData();
+    renderFood();
+  });
+  document.getElementById("dryAmount").addEventListener("input", function(){
+    ensureEntry(currentDate).food.dryAmount = this.value; saveData();
+  });
+  document.getElementById("wetAmount").addEventListener("input", function(){
+    ensureEntry(currentDate).food.wetAmount = this.value; saveData();
+  });
+
+  document.querySelectorAll("[data-step]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var e = ensureEntry(currentDate);
+      var k = btn.dataset.step, dir = parseInt(btn.dataset.dir,10);
+      e.litter[k] = Math.max(0, (e.litter[k]||0) + dir);
+      saveData();
+      renderLitter();
+    });
+  });
+
+  document.getElementById("vomitSwitch").addEventListener("click", function(){
+    var e = ensureEntry(currentDate);
+    e.vomited = !e.vomited;
+    saveData();
+    renderVomit();
+  });
+  document.getElementById("vomitNote").addEventListener("input", function(){
+    ensureEntry(currentDate).vomitNote = this.value; saveData();
+  });
+
+  function addMed(){
+    var input = document.getElementById("medInput");
+    var val = input.value.trim();
+    if(!val) return;
+    var e = ensureEntry(currentDate);
+    e.meds.push(val);
+    if(!data.medHistory) data.medHistory=[];
+    if(data.medHistory.indexOf(val)===-1) data.medHistory.unshift(val);
+    data.medHistory = data.medHistory.slice(0,25);
+    saveData();
+    input.value = "";
+    renderMeds();
+  }
+  document.getElementById("addMedBtn").addEventListener("click", addMed);
+  document.getElementById("medInput").addEventListener("keydown", function(ev){
+    if(ev.key==="Enter"){ ev.preventDefault(); addMed(); }
+  });
+
+  document.getElementById("notesField").addEventListener("input", function(){
+    ensureEntry(currentDate).notes = this.value; saveData();
+  });
+
+  /* ---------- date navigation ---------- */
+  document.getElementById("prevDay").addEventListener("click", function(){
+    var d = parseDate(currentDate);
+    d.setDate(d.getDate()-1);
+    currentDate = fmt(d);
+    renderToday();
+  });
+  document.getElementById("nextDay").addEventListener("click", function(){
+    if(currentDate >= todayStr()) return;
+    var d = parseDate(currentDate);
+    d.setDate(d.getDate()+1);
+    currentDate = fmt(d);
+    renderToday();
+  });
+  document.getElementById("dateLabel").addEventListener("click", function(){
+    document.getElementById("hiddenDate").showPicker ? document.getElementById("hiddenDate").showPicker() : document.getElementById("hiddenDate").click();
+  });
+  document.getElementById("hiddenDate").addEventListener("change", function(){
+    if(this.value){
+      currentDate = this.value > todayStr() ? todayStr() : this.value;
+      renderToday();
+    }
+  });
+
+  /* ---------- history ---------- */
+  function renderHistory(){
+    var dates = Object.keys(data.entries).sort();
+    var listEl = document.getElementById("historyList");
+    listEl.innerHTML = "";
+    if(dates.length===0){
+      listEl.innerHTML = '<div class="empty">No entries yet — check in on the Today tab to start your log.</div>';
+    } else {
+      dates.slice().reverse().forEach(function(dateStr){
+        var entry = data.entries[dateStr];
+        var res = computeTotal(entry.hhhhhmm);
+        var card = document.createElement("div");
+        card.className = "day-card";
+        var bits = [];
+        if(entry.overallGoodDay===true) bits.push("Good day");
+        if(entry.overallGoodDay===false) bits.push("Rough day");
+        if(entry.food.dry) bits.push("dry");
+        if(entry.food.wet) bits.push("wet");
+        if(entry.litter.poop) bits.push(entry.litter.poop+"× poop");
+        if(entry.litter.pee) bits.push(entry.litter.pee+"× pee");
+        if(entry.vomited) bits.push("vomited");
+        if(entry.meds.length) bits.push(entry.meds.length+" med"+(entry.meds.length>1?"s":""));
+        card.innerHTML =
+          '<div class="dot" style="background:'+(res.complete?scoreTotalColor(res.sum):"#DCD3C0")+'">'+(res.complete?res.sum:"–")+'</div>'+
+          '<div class="meta"><div class="metatop">'+niceDate(dateStr)+'</div><div class="metabottom">'+(bits.length?bits.join(" · "):"No care log entries")+'</div></div>'+
+          '<div class="chev">›</div>';
+        card.addEventListener("click", function(){
+          currentDate = dateStr;
+          switchView("today");
+        });
+        listEl.appendChild(card);
+      });
+    }
+    renderTrendChart(dates);
+  }
+  function scoreTotalColor(sum){
+    return sum>=35 ? "#7A8B6F" : (sum>=25 ? "#C98A3B" : "#B5654A");
+  }
+
+  function renderTrendChart(allDates){
+    var dates = allDates.slice(-30);
+    var svg = document.getElementById("trendChart");
+    var w=320, h=160, padL=28, padR=10, padT=14, padB=22;
+    if(dates.length===0){
+      svg.innerHTML = '<text x="160" y="80" text-anchor="middle" font-size="12" fill="#6B6355">Not enough data yet</text>';
+      return;
+    }
+    var plotW = w-padL-padR, plotH = h-padT-padB;
+    function x(i){ return dates.length<=1 ? padL+plotW/2 : padL + (i/(dates.length-1))*plotW; }
+    function y(v){ return padT + plotH - (v/70)*plotH; }
+
+    var parts = [];
+    parts.push('<line x1="'+padL+'" y1="'+y(35)+'" x2="'+(w-padR)+'" y2="'+y(35)+'" stroke="#B5654A" stroke-dasharray="4 4" stroke-width="1"/>');
+    parts.push('<line x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+(h-padB)+'" stroke="#DCD3C0" stroke-width="1"/>');
+    parts.push('<line x1="'+padL+'" y1="'+(h-padB)+'" x2="'+(w-padR)+'" y2="'+(h-padB)+'" stroke="#DCD3C0" stroke-width="1"/>');
+    parts.push('<text x="4" y="'+(y(70)+4)+'" font-size="9" fill="#6B6355">70</text>');
+    parts.push('<text x="4" y="'+(y(0)+4)+'" font-size="9" fill="#6B6355">0</text>');
+
+    var pts = [];
+    dates.forEach(function(d, i){
+      var entry = data.entries[d];
+      var res = computeTotal(entry.hhhhhmm);
+      if(res.complete){
+        var ptColor = entry.overallGoodDay===true ? "#7A8B6F" : (entry.overallGoodDay===false ? "#B5654A" : "#C98A3B");
+        pts.push([x(i), y(res.sum), ptColor]);
       }
     });
-  }, { threshold: 0.1 });
+    if(pts.length>1){
+      var d = "M "+pts[0][0]+" "+pts[0][1]+" "+pts.slice(1).map(function(p){return "L "+p[0]+" "+p[1];}).join(" ");
+      parts.push('<path d="'+d+'" fill="none" stroke="#C98A3B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>');
+    }
+    pts.forEach(function(p){
+      parts.push('<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+p[2]+'" stroke="#FBF8F2" stroke-width="1.5"/>');
+    });
+    parts.push('<text x="'+padL+'" y="'+(h-6)+'" font-size="9" fill="#6B6355">'+niceDate(dates[0])+'</text>');
+    parts.push('<text x="'+(w-padR)+'" y="'+(h-6)+'" font-size="9" fill="#6B6355" text-anchor="end">'+niceDate(dates[dates.length-1])+'</text>');
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    svg.innerHTML = parts.join("");
+  }
+
+  /* ---------- cloud sync ---------- */
+  function syncBase(){
+    return syncUrl.replace(/\/+$/,"") + "/cat-qol-data.json";
+  }
+  function timeAgo(ts){
+    if(!ts) return "a moment ago";
+    var s = Math.round((Date.now()-ts)/1000);
+    if(s<10) return "just now";
+    if(s<60) return s+"s ago";
+    var m = Math.round(s/60);
+    if(m<60) return m+"m ago";
+    var h = Math.round(m/60);
+    return h+"h ago";
+  }
+  function setSyncStatus(text){
+    var el = document.getElementById("syncStatus");
+    if(el) el.textContent = text;
+  }
+  function refreshSyncUI(){
+    var connectBtn = document.getElementById("syncConnectBtn");
+    var nowBtn = document.getElementById("syncNowBtn");
+    var input = document.getElementById("syncUrlInput");
+    if(!connectBtn) return;
+    input.value = syncUrl;
+    if(syncUrl){
+      connectBtn.textContent = "Update connection";
+      nowBtn.style.display = "block";
+    } else {
+      connectBtn.textContent = "Connect & sync";
+      nowBtn.style.display = "none";
+      setSyncStatus("Not connected — entries stay on this device only.");
+    }
+  }
+  function cloudPush(){
+    if(!syncUrl) return;
+    fetch(syncBase(), {method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(data)})
+      .then(function(r){ if(!r.ok) throw new Error("bad response"); setSyncStatus("Synced "+timeAgo(data.updatedAt)); })
+      .catch(function(){ setSyncStatus("Sync failed — check the database URL and your connection."); });
+  }
+  function cloudPull(isManual){
+    if(!syncUrl) return;
+    if(isManual) setSyncStatus("Syncing…");
+    fetch(syncBase())
+      .then(function(r){ return r.json(); })
+      .then(function(remote){
+        if(remote && typeof remote==="object" && (remote.entries || remote.updatedAt)){
+          if(!data.updatedAt || (remote.updatedAt||0) > data.updatedAt){
+            data = remote;
+            try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+            if(currentView==="today") renderToday();
+            if(currentView==="history") renderHistory();
+            setSyncStatus("Synced "+timeAgo(data.updatedAt));
+            return;
+          }
+          setSyncStatus("Up to date · last synced "+timeAgo(data.updatedAt));
+        } else if(isManual){
+          // nothing at the remote yet — push local up as the starting point
+          cloudPush();
+        } else {
+          setSyncStatus("Waiting for first sync…");
+        }
+      })
+      .catch(function(){ setSyncStatus("Sync failed — check the database URL and your connection."); });
+  }
+  document.getElementById("syncConnectBtn").addEventListener("click", function(){
+    var url = document.getElementById("syncUrlInput").value.trim();
+    if(!url){ setSyncStatus("Paste a database URL first."); return; }
+    syncUrl = url;
+    try{ localStorage.setItem(SYNC_KEY, syncUrl); }catch(e){}
+    refreshSyncUI();
+    cloudPull(true);
+  });
+  document.getElementById("syncNowBtn").addEventListener("click", function(){
+    cloudPull(true);
+  });
+  setInterval(function(){ if(syncUrl) cloudPull(false); }, 20000);
+
+  /* ---------- settings ---------- */
+  document.getElementById("settingsCatName").addEventListener("input", function(){
+    data.catName = this.value;
+    saveData();
+    document.getElementById("catNameHeader").textContent = data.catName ? "for our sweet baby boy, "+data.catName : "for our sweet baby boy";
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", function(){
+    var rows = [["Date","Total","Hurt","Hunger","Hydration","Hygiene","Happiness","Mobility","MoreGoodDays","OverallGoodDay","AteDry","DryAmount","AteWet","WetAmount","Poop","Pee","Vomited","VomitNote","Meds","Notes"]];
+    Object.keys(data.entries).sort().forEach(function(d){
+      var e = data.entries[d];
+      var res = computeTotal(e.hhhhhmm);
+      rows.push([
+        d, res.complete?res.sum:"",
+        e.hhhhhmm.hurt, e.hhhhhmm.hunger, e.hhhhhmm.hydration, e.hhhhhmm.hygiene,
+        e.hhhhhmm.happiness, e.hhhhhmm.mobility, e.hhhhhmm.good,
+        e.overallGoodDay===true?"Yes":(e.overallGoodDay===false?"No":""),
+        e.food.dry, e.food.dryAmount, e.food.wet, e.food.wetAmount,
+        e.litter.poop, e.litter.pee, e.vomited, e.vomitNote,
+        e.meds.join("; "), e.notes
+      ]);
+    });
+    var csv = rows.map(function(r){
+      return r.map(function(v){
+        v = (v===null||v===undefined) ? "" : String(v);
+        if(v.indexOf(",")>-1 || v.indexOf('"')>-1 || v.indexOf("\n")>-1){
+          v = '"'+v.replace(/"/g,'""')+'"';
+        }
+        return v;
+      }).join(",");
+    }).join("\n");
+    var blob = new Blob([csv], {type:"text/csv"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = (data.catName||"cat")+"-quality-of-life.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    if(confirm("Delete all logged data on this device? This can't be undone.")){
+      data = {catName:data.catName, entries:{}, medHistory:[]};
+      saveData();
+      renderToday();
+      renderHistory();
+    }
+  });
+
+  /* ---------- tabs ---------- */
+  function switchView(view){
+    currentView = view;
+    document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("active"); });
+    document.getElementById("view-"+view).classList.add("active");
+    document.querySelectorAll(".tab-btn").forEach(function(b){
+      b.classList.toggle("active", b.dataset.view===view);
+    });
+    if(view==="today") renderToday();
+    if(view==="history") renderHistory();
+    if(view==="settings") refreshSyncUI();
+  }
+  document.querySelectorAll(".tab-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){ switchView(btn.dataset.view); });
+  });
+
+  /* ---------- init ---------- */
+  renderToday();
+  refreshSyncUI();
+  if(syncUrl) cloudPull(false);
+})();
 </script>
 </body>
 </html>
