@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anna Verber - Senior Healthcare Product Leader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f0d;
+    --bg2: #161612;
+    --bg3: #1d1d18;
+    --text: #e8e6df;
+    --muted: #8a8880;
+    --accent: #c9b99a;
+    --accent2: #7a9e8e;
+    --line: rgba(255,255,255,0.07);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15,15,13,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-logo {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 3rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 30%, rgba(122,158,142,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(201,185,154,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 3rem;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-primary:hover { background: #d4c5ad; transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--text); }
+
+  .btn-ghost::after {
+    content: '↗';
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+  }
+
+  .btn-ghost:hover::after { transform: translate(2px, -2px); }
+
+  /* SECTIONS */
+  section {
+    padding: 6rem 3rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 3rem;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .about-heading {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+
+  .about-heading em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .about-body {
+    color: var(--muted);
+    line-height: 1.9;
+    font-size: 0.95rem;
+  }
+
+  .about-body p + p { margin-top: 1.2rem; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .stat {
+    border-left: 1px solid var(--accent);
+    padding-left: 1.25rem;
+  }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+
+  /* EXPERIENCE */
+  .experience-list { max-width: 720px; }
+
+  .exp-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 2rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .exp-item:last-child { border-bottom: none; }
+
+  .exp-meta {
+    padding-top: 0.25rem;
+  }
+
+  .exp-period {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .exp-company {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-top: 0.5rem;
+  }
+
+  .exp-title {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+
+  .exp-body {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+
+  .exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 900px;
+  }
+
+  .skill-group-title {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .skill-list {
+    list-style: none;
+  }
+
+  .skill-list li {
+    font-size: 0.88rem;
+    color: var(--muted);
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .skill-list li:last-child { border-bottom: none; }
+
+  /* EDUCATION */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 800px;
+  }
+
+  .edu-card {
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    padding: 2rem;
+  }
+
+  .edu-degree {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .edu-school {
+    font-size: 0.8rem;
+    color: var(--accent2);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+  }
+
+  .edu-detail {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* CERTIFICATIONS */
+  .cert-list {
+    list-style: none;
+    max-width: 640px;
+  }
+
+  .cert-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .cert-list li::before {
+    content: '—';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* CONTACT */
+  .contact-inner {
+    max-width: 600px;
+  }
+
+  .contact-heading {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-heading em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .contact-link:hover { color: var(--text); }
+
+  .contact-link-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .contact-link-arrow {
+    margin-left: auto;
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+  }
+
+  .contact-link:hover .contact-link-arrow { transform: translate(3px, -3px); }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: #3a3a35;
+  }
+
+  /* FADE IN */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 1.25rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 0 1.5rem 4rem; }
+    section { padding: 4rem 1.5rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .exp-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Anna Verber</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Senior Experience Product Manager — Abbott</p>
+  <h1 class="hero-name">Anna<br><em>Verber</em></h1>
+  <p class="hero-sub">Building healthcare products that meet people in their most critical moments — from cancer diagnostics to pharmacy care. CSPO · MBA, University of Wisconsin · Madison, WI</p>
+  <div class="hero-ctas">
+    <a href="#contact" class="btn-primary">Get in touch</a>
+    <a href="https://www.linkedin.com/in/anna-verber-624620112/" target="_blank" class="btn-ghost">LinkedIn</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label">About</p>
+  <div class="about-grid">
+    <div>
+      <h2 class="about-heading">Bridging <em>strategy</em> and execution in health tech</h2>
+      <div class="about-body">
+        <p>Product manager with a track record of launching and scaling complex software in healthcare — from leading Epic EHR implementations for health systems to pharmacy management platforms and copay assistance products — with a relentless focus on outcomes that matter for both users and the bottom line.</p>
+        <p>Currently at Abbott, designing an empathetic patient experience within the MyChart portal for people navigating cancer diagnostics — work that sits at the intersection of product craft, clinical context, and human compassion.</p>
+        <p>MBA graduate from the Wisconsin School of Business, with a focus on AI, data analytics, financial insight, and strategic innovation.</p>
+      </div>
+    </div>
+    <div>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-num">88%</div>
+          <div class="stat-label">hourly throughput increase per technician within 180 days of pharmacy management platform go-live — nearly doubling productivity through continuous user feedback and rapid iteration</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">$36M</div>
+          <div class="stat-label">gross revenue product portfolio managed at a national PBM, delivering 4:1 ROI and 10–25% annual savings for clients on copay assistance programs</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">75%</div>
+          <div class="stat-label">reduction in manual workflows supporting claims adjudication, achieved through strategic process automation and RPA — freeing teams to focus on higher-value work</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">8</div>
+          <div class="stat-label">nationwide pharmacies launched on a custom cloud-based pharmacy management platform — Lumicera's most complex and consequential initiative to date</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="section-label">Experience</p>
+  <div class="experience-list">
+
+    <div class="exp-item fade-in">
+      <div class="exp-meta">
+        <div class="exp-period">2026 — Present</div>
+        <div class="exp-company">Abbott</div>
+      </div>
+      <div>
+        <h3 class="exp-title">Senior Experience Product Manager</h3>
+        <p class="exp-body">Managing Abbott's MyChart patient portal for the Cancer Diagnostics division that has served over 20 million patients across screening, diagnostics, hereditary risk, monitoring, and treatment guidance. Designing a tailored, empathetic experience that meets patients with clarity at every step of a high-stakes and deeply personal journey.</p>
+        <div class="exp-tags">
+          <span class="tag">MyChart</span>
+          <span class="tag">Patient Experience</span>
+          <span class="tag">Cancer Diagnostics</span>
+          <span class="tag">UX Strategy</span>
+          <span class="tag">Healthcare Tech</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item fade-in">
+      <div class="exp-meta">
+        <div class="exp-period">2025 — 2026</div>
+        <div class="exp-company">Navitus / Lumicera</div>
+      </div>
+      <div>
+        <h3 class="exp-title">Product Owner</h3>
+        <p class="exp-body">Spearheaded Lumicera's largest-ever initiative — a custom cloud-based pharmacy management platform — deployed across 8 nationwide pharmacies. Improved operational efficiency ~40% within 90 days of release; achieved 88% revenue increase per technician by 180 days. Led a distributed Agile team as both Product Owner and Scrum Master, driving 10+ releases with zero system downtime.</p>
+        <div class="exp-tags">
+          <span class="tag">Agile / Scrum</span>
+          <span class="tag">Cloud Platform</span>
+          <span class="tag">UAT</span>
+          <span class="tag">Azure DevOps</span>
+        </div>
+        <div style="margin-top:2rem;padding-top:2rem;border-top:1px solid var(--line);display:grid;grid-template-columns:140px 1fr;gap:2rem;">
+          <div class="exp-period">2023 — 2025</div>
+          <div>
+            <h3 class="exp-title">Associate Product Manager</h3>
+            <p class="exp-body">Managed a portfolio of copay assistance products generating $36M in gross revenue. Reduced manual workflows 50–75% through robotic process automation and Qlik analytics. Launched a new weight-loss management product offering 10–15% savings to pilot clients.</p>
+            <div class="exp-tags">
+              <span class="tag">Product Portfolio</span>
+              <span class="tag">Qlik</span>
+              <span class="tag">RPA</span>
+              <span class="tag">Client Strategy</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item fade-in">
+      <div class="exp-meta">
+        <div class="exp-period">2021 — 2023</div>
+        <div class="exp-company">Epic Systems</div>
+      </div>
+      <div>
+        <h3 class="exp-title">Trainer & Implementation Manager</h3>
+        <p class="exp-body">Earned a 9.5/10 trainer feedback score — above the company average — while simultaneously managing go-live project support for 5+ health systems and leading quarterly curriculum upgrades for a 60+ person team. Served as lead implementation manager on two successful add-on installs, and built a mentorship program that eased the trainer-to-project-manager transition for new hires joining customer installs.</p>
+        <div class="exp-tags">
+          <span class="tag">Epic EHR</span>
+          <span class="tag">Implementation</span>
+          <span class="tag">Training</span>
+          <span class="tag">Project Management</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item fade-in">
+      <div class="exp-meta">
+        <div class="exp-period">2020 — 2021</div>
+        <div class="exp-company">Navitus / Lumicera</div>
+      </div>
+      <div>
+        <h3 class="exp-title">Product Operations Specialist</h3>
+        <p class="exp-body">Helped launch and manage daily operations of a new specialty pharmacy insurance product delivering 40–60% savings for clients. Developed client-specific processes from the ground up, generating $2.2M in savings in 2021 alone.</p>
+        <div class="exp-tags">
+          <span class="tag">Operations</span>
+          <span class="tag">Dynamics CRM</span>
+          <span class="tag">Pharmacy</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="section-label">Skills & Certifications</p>
+  <div class="skills-grid fade-in">
+    <div>
+      <p class="skill-group-title">Product & Methodology</p>
+      <ul class="skill-list">
+        <li>Scaled Agile Framework (SAFe)</li>
+        <li>Scrum / Sprint Planning</li>
+        <li>Backlog Refinement</li>
+        <li>Software Development Life Cycle</li>
+        <li>User Acceptance Testing</li>
+        <li>Product Strategy & Roadmapping</li>
+      </ul>
+    </div>
+    <div>
+      <p class="skill-group-title">Tools & Platforms</p>
+      <ul class="skill-list">
+        <li>Jira</li>
+        <li>Azure Microsoft DevOps</li>
+        <li>Microsoft Dynamics CRM</li>
+        <li>Epic EHR</li>
+        <li>Qliksense / Qlikview</li>
+        <li>Tableau</li>
+        <li>Microsoft Excel (Advanced)</li>
+      </ul>
+    </div>
+    <div>
+      <p class="skill-group-title">Certifications</p>
+      <ul class="skill-list">
+        <li>Scrum Alliance CSPO</li>
+        <li>Product Management Basics — Pendo.io</li>
+        <li>Excel Proficiency — Wisconsin School of Business</li>
+        <li>Google Cloud Generative AI Leader</li>
+      </ul>
+      <p class="skill-group-title" style="margin-top: 2rem;">AI Fluency</p>
+      <ul class="skill-list">
+        <li>AI Strategy & Enterprise Readiness</li>
+        <li>AI Governance & Ethics</li>
+        <li>Responsible AI Adoption</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section>
+  <p class="section-label">Education</p>
+  <div class="edu-grid fade-in">
+    <div class="edu-card">
+      <h3 class="edu-degree">MBA</h3>
+      <p class="edu-school">University of Wisconsin — Madison</p>
+      <p class="edu-detail">Graduated 2026<br>Focus: Financial Insight · Strategic Innovation · Artificial Intelligence · Data Analytics · Business Analytics</p>
+    </div>
+    <div class="edu-card">
+      <h3 class="edu-degree">B.A., Communication Science & Rhetorical Studies</h3>
+      <p class="edu-school">University of Wisconsin — Madison</p>
+      <p class="edu-detail">Minor: Gender & Women's Studies</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <p class="section-label">Contact</p>
+    <h2 class="contact-heading">Let's build something <em>meaningful</em></h2>
+    <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8;">Open to conversations about product leadership, healthcare technology, and the intersection of AI and human-centered design.</p>
+    <div class="contact-links">
+      <a href="mailto:annacblasco@gmail.com" class="contact-link">
+        <span class="contact-link-label">Email</span>
+        annacblasco@gmail.com
+        <span class="contact-link-arrow">↗</span>
+      </a>
+      <a href="https://www.linkedin.com/in/anna-verber-624620112/" target="_blank" class="contact-link">
+        <span class="contact-link-label">LinkedIn</span>
+        Anna Verber
+        <span class="contact-link-arrow">↗</span>
+      </a>
+      <a href="#" class="contact-link">
+        <span class="contact-link-label">Location</span>
+        Madison, WI
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">Anna Verber</span>
+  <span class="footer-copy">© 2026</span>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
