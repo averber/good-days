@@ -260,6 +260,32 @@
   }
   textarea:focus, .medinput:focus{outline:2px solid var(--amber); outline-offset:1px;}
 
+  .quick-med-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .quick-med-btn{
+    border:1.5px solid var(--line);
+    background:var(--paper);
+    border-radius:14px;
+    padding:10px 8px;
+    text-align:center;
+    font-family:'Nunito Sans', sans-serif;
+    font-weight:700;
+    font-size:13.5px;
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform .1s;
+  }
+  .quick-med-btn:active{transform:scale(0.97);}
+  .quick-med-btn .sub{display:block; font-size:11.5px; font-weight:400; color:var(--ink-soft); margin-top:1px;}
+  .quick-med-btn.just-added{
+    background:var(--sage); border-color:var(--sage); color:#fff;
+  }
+  .quick-med-btn.just-added .sub{color:rgba(255,255,255,0.85);}
+
   .med-add-row{display:flex; gap:8px; margin-bottom:10px;}
   .med-add-row .medinput{flex:1;}
   .med-add-row button{
@@ -458,8 +484,14 @@
 
     <div class="card">
       <h2 class="sectiontitle">Medications given</h2>
+      <div class="quick-med-grid" id="quickMedGrid">
+        <button class="quick-med-btn" data-med="Miralax 1/4 tsp">Miralax<span class="sub">1/4 tsp</span></button>
+        <button class="quick-med-btn" data-med="Amlodipine 0.625mg">Amlodipine<span class="sub">0.625mg</span></button>
+        <button class="quick-med-btn" data-med="Spironolactone 12.5mg">Spironolactone<span class="sub">12.5mg</span></button>
+        <button class="quick-med-btn" data-med="Potassium">Potassium</button>
+      </div>
       <div class="med-add-row">
-        <input class="medinput" id="medInput" list="medHistoryList" placeholder="Med name + dose, e.g. Gabapentin 50mg">
+        <input class="medinput" id="medInput" list="medHistoryList" placeholder="Or type another med + dose">
         <datalist id="medHistoryList"></datalist>
         <button id="addMedBtn">Add</button>
       </div>
@@ -845,9 +877,9 @@
     ensureEntry(currentDate).vomitNote = this.value; saveData();
   });
 
-  function addMed(){
+  function addMed(presetVal){
     var input = document.getElementById("medInput");
-    var val = input.value.trim();
+    var val = (presetVal!==undefined ? presetVal : input.value).trim();
     if(!val) return;
     var e = ensureEntry(currentDate);
     e.meds.push(val);
@@ -858,9 +890,17 @@
     input.value = "";
     renderMeds();
   }
-  document.getElementById("addMedBtn").addEventListener("click", addMed);
+  document.getElementById("addMedBtn").addEventListener("click", function(){ addMed(); });
   document.getElementById("medInput").addEventListener("keydown", function(ev){
     if(ev.key==="Enter"){ ev.preventDefault(); addMed(); }
+  });
+
+  document.getElementById("quickMedGrid").addEventListener("click", function(ev){
+    var btn = ev.target.closest(".quick-med-btn");
+    if(!btn) return;
+    addMed(btn.dataset.med);
+    btn.classList.add("just-added");
+    setTimeout(function(){ btn.classList.remove("just-added"); }, 700);
   });
 
   document.getElementById("notesField").addEventListener("input", function(){
