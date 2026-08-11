@@ -306,10 +306,10 @@
   }
   .quick-med-btn:active{transform:scale(0.97);}
   .quick-med-btn .sub{display:block; font-size:11.5px; font-weight:400; color:var(--ink-soft); margin-top:1px;}
-  .quick-med-btn.just-added{
+  .quick-med-btn.on{
     background:var(--sage); border-color:var(--sage); color:#fff;
   }
-  .quick-med-btn.just-added .sub{color:rgba(255,255,255,0.85);}
+  .quick-med-btn.on .sub{color:rgba(255,255,255,0.85);}
 
   .med-add-row{display:flex; gap:8px; margin-bottom:10px;}
   .med-add-row .medinput{flex:1;}
@@ -414,7 +414,7 @@
     <div class="catname-row" id="catNameHeader">for our sweet baby boy, Ringo</div>
   </header>
 
-  <div class="datebar">
+  <div class="datebar" id="datebar">
     <button id="prevDay" aria-label="Previous day">‹</button>
     <div class="datelabel" id="dateLabel">Today</div>
     <button id="nextDay" aria-label="Next day">›</button>
@@ -578,7 +578,7 @@
       <button class="btn-secondary" id="syncNowBtn" style="display:none;">Sync now</button>
       <div class="hint" id="syncStatus">Not connected — entries stay on this device only.</div>
       <div class="hint" style="margin-top:10px;">
-        To share this log with your husband, set up one free shared database and enter the same URL on both phones:<br><br>
+        To share this log with another user, set up one free shared database and enter the same URL on both phones:<br><br>
         1. Go to console.firebase.google.com and create a free project.<br>
         2. Open Build → Realtime Database → Create Database → start in test mode.<br>
         3. In the Rules tab, set both <code>.read</code> and <code>.write</code> to <code>true</code>, then publish (so it doesn't expire in 30 days).<br>
@@ -682,15 +682,55 @@
       notes:""
     };
   }
+  // Firebase Realtime Database silently drops any object made entirely of
+  // null values (e.g. a day where every HHHHHMM score was left unanswered).
+  // This rebuilds any entry back to its full shape so missing groups never
+  // crash rendering — whether they're missing from local storage or from
+  // a synced copy pulled down from the shared database.
+  function normalizeEntry(raw){
+    raw = raw || {};
+    var h = {};
+    CATS.forEach(function(c){
+      h[c.key] = (raw.hhhhhmm && raw.hhhhhmm[c.key] !== undefined) ? raw.hhhhhmm[c.key] : null;
+    });
+    return {
+      hhhhhmm: h,
+      overallGoodDay: raw.overallGoodDay !== undefined ? raw.overallGoodDay : null,
+      food: {
+        dry: (raw.food && raw.food.dry !== undefined) ? raw.food.dry : null,
+        wet: (raw.food && raw.food.wet !== undefined) ? raw.food.wet : null
+      },
+      litter: {
+        poop: (raw.litter && raw.litter.poop) || 0,
+        pee: (raw.litter && raw.litter.pee) || 0,
+        cleaned: (raw.litter && raw.litter.cleaned !== undefined) ? raw.litter.cleaned : null
+      },
+      vomited: !!raw.vomited,
+      vomitNote: raw.vomitNote || "",
+      meds: Array.isArray(raw.meds) ? raw.meds : [],
+      notes: raw.notes || ""
+    };
+  }
+  function normalizeData(d){
+    d = d || {};
+    if(!d.entries) d.entries = {};
+    Object.keys(d.entries).forEach(function(dateStr){
+      d.entries[dateStr] = normalizeEntry(d.entries[dateStr]);
+    });
+    if(!Array.isArray(d.medHistory)) d.medHistory = [];
+    if(!d.catName) d.catName = d.catName || "";
+    if(!d.updatedAt) d.updatedAt = d.updatedAt || 0;
+    return d;
+  }
   function getEntry(dateStr){
-    return data.entries[dateStr] || defaultEntry();
+    return normalizeEntry(data.entries[dateStr]);
   }
   function ensureEntry(dateStr){
-    if(!data.entries[dateStr]) data.entries[dateStr] = defaultEntry();
+    data.entries[dateStr] = normalizeEntry(data.entries[dateStr]);
     return data.entries[dateStr];
   }
 
-  var data = loadData();
+  var data = normalizeData(loadData());
   var currentDate = todayStr();
   var currentView = "today";
 
@@ -817,6 +857,9 @@
         renderMeds();
       });
     });
+    document.querySelectorAll(".quick-med-btn").forEach(function(btn){
+      btn.classList.toggle("on", entry.meds.indexOf(btn.dataset.med) !== -1);
+    });
     var list = document.getElementById("medHistoryList");
     list.innerHTML = "";
     (data.medHistory||[]).forEach(function(m){
@@ -925,9 +968,16 @@
   document.getElementById("quickMedGrid").addEventListener("click", function(ev){
     var btn = ev.target.closest(".quick-med-btn");
     if(!btn) return;
-    addMed(btn.dataset.med);
-    btn.classList.add("just-added");
-    setTimeout(function(){ btn.classList.remove("just-added"); }, 700);
+    var med = btn.dataset.med;
+    var e = ensureEntry(currentDate);
+    var idx = e.meds.indexOf(med);
+    if(idx !== -1){
+      e.meds.splice(idx, 1);
+      saveData();
+      renderMeds();
+    } else {
+      addMed(med);
+    }
   });
 
   document.getElementById("notesField").addEventListener("input", function(){
@@ -1087,7 +1137,7 @@
       .then(function(remote){
         if(remote && typeof remote==="object" && (remote.entries || remote.updatedAt)){
           if(!data.updatedAt || (remote.updatedAt||0) > data.updatedAt){
-            data = remote;
+            data = normalizeData(remote);
             try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
             if(currentView==="today") renderToday();
             if(currentView==="history") renderHistory();
@@ -1178,6 +1228,7 @@
     document.querySelectorAll(".tab-btn").forEach(function(b){
       b.classList.toggle("active", b.dataset.view===view);
     });
+    document.getElementById("datebar").style.display = (view==="today") ? "flex" : "none";
     if(view==="today") renderToday();
     if(view==="history") renderHistory();
     if(view==="settings") refreshSyncUI();
