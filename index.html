@@ -4,9 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
 <title>Good Days — Ringo's Quality of Life</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#C98A3B">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-messaging-compat.js"></script>
 <style>
   :root{
     --nav-bottom-offset:0px;
@@ -587,6 +592,22 @@
       </div>
     </div>
     <div class="card">
+      <h2 class="sectiontitle">Daily reminder</h2>
+      <div class="settings-field">
+        <label>Firebase config (paste the whole block from console)</label>
+        <textarea id="fbConfigInput" rows="4" placeholder='{ "apiKey": "...", "authDomain": "...", "projectId": "...", "messagingSenderId": "...", "appId": "..." }'></textarea>
+      </div>
+      <div class="settings-field">
+        <label>Web push (VAPID) key</label>
+        <input type="text" id="vapidInput" placeholder="Paste your VAPID key here">
+      </div>
+      <button class="btn-secondary" id="enableReminderBtn">Enable reminders on this phone</button>
+      <div class="hint" id="reminderStatus">Reminders are off on this phone.</div>
+      <div class="hint" style="margin-top:10px;">
+        You'll get an evening nudge (around 7pm) if today's HHHHHMM check-in is still incomplete — no notification at all on days you've already logged. This needs a one-time setup on a computer to deploy the scheduled sender; see PUSH_NOTIFICATIONS_SETUP.md for the full walkthrough. Do this step on <b>both</b> phones you want reminders on.
+      </div>
+    </div>
+    <div class="card">
       <h2 class="sectiontitle">Your data</h2>
       <button class="btn-secondary" id="exportBtn">Export as CSV</button>
       <button class="btn-danger" id="clearBtn">Delete all data</button>
@@ -737,6 +758,10 @@
   var SYNC_KEY = "cat-qol-sync-url";
   var syncUrl = "";
   try{ syncUrl = localStorage.getItem(SYNC_KEY) || ""; }catch(e){}
+
+  var FB_CONFIG_KEY = "cat-qol-fb-config";
+  var VAPID_KEY = "cat-qol-vapid-key";
+  var REMINDER_ON_KEY = "cat-qol-reminder-on";
 
   function scoreColor(v){
     if(v===null || v===undefined) return "#DCD3C0";
@@ -1167,6 +1192,113 @@
   });
   setInterval(function(){ if(syncUrl) cloudPull(false); }, 20000);
 
+  /* ---------- daily reminder (push notifications) ---------- */
+  function parseFirebaseConfig(text){
+    text = text.trim();
+    if(!text) return null;
+    // Strip a leading "const firebaseConfig =" style assignment if pasted verbatim, and any trailing semicolon.
+    text = text.replace(/^\s*(const|var|let)\s+\w+\s*=\s*/,"").replace(/;\s*$/,"");
+    try{
+      // Using Function instead of JSON.parse tolerates unquoted keys, which is
+      // how Firebase's console shows the config snippet.
+      var obj = (new Function("return (" + text + ")"))();
+      if(obj && typeof obj==="object" && obj.projectId) return obj;
+    }catch(e){}
+    return null;
+  }
+  function refreshReminderUI(){
+    var btn = document.getElementById("enableReminderBtn");
+    var status = document.getElementById("reminderStatus");
+    var configText = "";
+    var vapid = "";
+    try{
+      configText = localStorage.getItem(FB_CONFIG_KEY) || "";
+      vapid = localStorage.getItem(VAPID_KEY) || "";
+    }catch(e){}
+    document.getElementById("fbConfigInput").value = configText;
+    document.getElementById("vapidInput").value = vapid;
+    var on = false;
+    try{ on = localStorage.getItem(REMINDER_ON_KEY) === "1"; }catch(e){}
+    if(on){
+      btn.textContent = "Reminders are on — tap to turn off";
+      status.textContent = "Reminders are on for this phone.";
+    } else {
+      btn.textContent = "Enable reminders on this phone";
+      status.textContent = "Reminders are off on this phone.";
+    }
+  }
+  function tokenPath(token){
+    return syncUrl.replace(/\/+$/,"") + "/cat-qol-fcm-tokens/" + encodeURIComponent(token) + ".json";
+  }
+  document.getElementById("enableReminderBtn").addEventListener("click", function(){
+    var status = document.getElementById("reminderStatus");
+    var alreadyOn = false;
+    try{ alreadyOn = localStorage.getItem(REMINDER_ON_KEY) === "1"; }catch(e){}
+
+    if(alreadyOn){
+      try{ localStorage.setItem(REMINDER_ON_KEY, "0"); }catch(e){}
+      refreshReminderUI();
+      status.textContent = "Reminders turned off on this phone.";
+      return;
+    }
+
+    if(!syncUrl){
+      status.textContent = "Connect sync (above) first — reminders use the same shared database.";
+      return;
+    }
+    var configObj = parseFirebaseConfig(document.getElementById("fbConfigInput").value);
+    var vapid = document.getElementById("vapidInput").value.trim();
+    if(!configObj){
+      status.textContent = "That Firebase config didn't look right — paste the full block from the console.";
+      return;
+    }
+    if(!vapid){
+      status.textContent = "Paste your VAPID (web push) key first.";
+      return;
+    }
+    try{
+      localStorage.setItem(FB_CONFIG_KEY, JSON.stringify(configObj));
+      localStorage.setItem(VAPID_KEY, vapid);
+    }catch(e){}
+
+    status.textContent = "Requesting permission…";
+    if(!("Notification" in window) || !("serviceWorker" in navigator)){
+      status.textContent = "This browser doesn't support push notifications.";
+      return;
+    }
+    try{
+      if(!firebase.apps.length) firebase.initializeApp(configObj);
+    }catch(e){}
+    navigator.serviceWorker.register("firebase-messaging-sw.js").then(function(registration){
+      return Notification.requestPermission().then(function(permission){
+        if(permission !== "granted"){
+          status.textContent = "Notification permission was not granted.";
+          return;
+        }
+        var messaging = firebase.messaging();
+        messaging.getToken({vapidKey: vapid, serviceWorkerRegistration: registration}).then(function(token){
+          if(!token){
+            status.textContent = "Couldn't get a notification token — try again.";
+            return;
+          }
+          fetch(tokenPath(token), {method:"PUT", headers:{"Content-Type":"application/json"}, body: JSON.stringify(true)})
+            .then(function(){
+              try{ localStorage.setItem(REMINDER_ON_KEY, "1"); }catch(e){}
+              refreshReminderUI();
+              status.textContent = "Reminders are on — you'll be nudged around 7pm on days you haven't logged yet.";
+            })
+            .catch(function(){
+              status.textContent = "Got permission, but couldn't save your device to the shared list. Check your database URL and try again.";
+            });
+        }).catch(function(err){
+          status.textContent = "Couldn't set up notifications on this phone: " + (err && err.message ? err.message : "unknown error");
+        });
+      });
+    }).catch(function(err){
+      status.textContent = "Couldn't register the notification service worker: " + (err && err.message ? err.message : "unknown error");
+    });
+  });
+
   /* ---------- settings ---------- */
   document.getElementById("settingsCatName").addEventListener("input", function(){
     data.catName = this.value;
@@ -1231,7 +1363,7 @@
     document.getElementById("datebar").style.display = (view==="today") ? "flex" : "none";
     if(view==="today") renderToday();
     if(view==="history") renderHistory();
-    if(view==="settings") refreshSyncUI();
+    if(view==="settings"){ refreshSyncUI(); refreshReminderUI(); }
   }
   document.querySelectorAll(".tab-btn").forEach(function(btn){
     btn.addEventListener("click", function(){ switchView(btn.dataset.view); });
