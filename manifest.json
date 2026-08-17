@@ -1,0 +1,10 @@
+{
+  "name": "Good Days",
+  "short_name": "Good Days",
+  "description": "Quality of life tracker for Ringo",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EDE6D8",
+  "theme_color": "#C98A3B"
+}
