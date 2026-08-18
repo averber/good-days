@@ -15,21 +15,23 @@ importScripts("https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js
 importScripts("https://www.gstatic.com/firebasejs/10.13.1/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-  apiKey: "AIzaSyD_LQHvBSkLxEJuU5r-qlGQ946GgePY3kI",
-  authDomain: "good-days-b74d0.firebaseapp.com",
-  projectId: "good-days-b74d0",
-  messagingSenderId: "177637236541",
-  appId: "1:177637236541:web:0d2a45e8c1a5c5c40e6f54"
+  apiKey: "PASTE_YOUR_API_KEY_HERE",
+  authDomain: "PASTE_YOUR_PROJECT_ID_HERE.firebaseapp.com",
+  projectId: "PASTE_YOUR_PROJECT_ID_HERE",
+  messagingSenderId: "PASTE_YOUR_SENDER_ID_HERE",
+  appId: "PASTE_YOUR_APP_ID_HERE"
 });
 
 var messaging = firebase.messaging();
 
 // Shows the notification when a push arrives while the app isn't open.
+// This is the ONLY place the notification gets displayed — the Cloud
+// Function sends a data-only message (no "notification" field) so
+// nothing shows up automatically and duplicates this.
 messaging.onBackgroundMessage(function(payload){
-  var title = (payload.notification && payload.notification.title) || "Good Days";
+  var title = (payload.data && payload.data.title) || "Good Days";
   var options = {
-    body: (payload.notification && payload.notification.body) || "Time to check in on Ringo.",
-    icon: undefined,
+    body: (payload.data && payload.data.body) || "Time to check in on Ringo.",
     tag: "good-days-reminder"
   };
   self.registration.showNotification(title, options);
