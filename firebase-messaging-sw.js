@@ -28,13 +28,18 @@ var messaging = firebase.messaging();
 // This is the ONLY place the notification gets displayed — the Cloud
 // Function sends a data-only message (no "notification" field) so
 // nothing shows up automatically and duplicates this.
+//
+// The title is intentionally left blank: iOS always shows its own
+// "from [App Name]" label on push notifications (a security label that
+// can't be turned off), so giving it a matching title of our own just
+// produces a redundant duplicate line. Leaving it blank means the OS's
+// own app-name label is the only title shown, with the message below it.
 messaging.onBackgroundMessage(function(payload){
-  var title = (payload.data && payload.data.title) || "Good Days";
   var options = {
     body: (payload.data && payload.data.body) || "Time to check in on Ringo.",
     tag: "good-days-reminder"
   };
-  self.registration.showNotification(title, options);
+  self.registration.showNotification("", options);
 });
 
 // Tapping the notification opens (or focuses) the app.
