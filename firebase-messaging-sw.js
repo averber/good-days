@@ -39,7 +39,7 @@ messaging.onBackgroundMessage(function(payload){
     body: (payload.data && payload.data.body) || "Time to check in on Ringo.",
     tag: "good-days-reminder"
   };
-  self.registration.showNotification("", options);
+  self.registration.showNotification("Daily Reminder", options);
 });
 
 // Tapping the notification opens (or focuses) the app.
