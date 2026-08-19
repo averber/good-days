@@ -291,10 +291,17 @@
   textarea:focus, .medinput:focus{outline:2px solid var(--amber); outline-offset:1px;}
 
   .quick-med-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
+    display:flex;
+    flex-direction:column;
     gap:8px;
     margin-bottom:12px;
+  }
+  .quick-med-row{
+    display:flex;
+    gap:8px;
+  }
+  .quick-med-row .quick-med-btn{
+    flex:1;
   }
   .quick-med-btn{
     border:1.5px solid var(--line);
@@ -525,10 +532,15 @@
     <div class="card">
       <h2 class="sectiontitle">Medications given</h2>
       <div class="quick-med-grid" id="quickMedGrid">
-        <button class="quick-med-btn" data-med="Miralax 1/4 tsp">Miralax<span class="sub">1/4 tsp</span></button>
-        <button class="quick-med-btn" data-med="Amlodipine 0.625mg">Amlodipine<span class="sub">0.625mg</span></button>
-        <button class="quick-med-btn" data-med="Spironolactone 12.5mg">Spironolactone<span class="sub">12.5mg</span></button>
-        <button class="quick-med-btn" data-med="Potassium">Potassium</button>
+        <div class="quick-med-row">
+          <button class="quick-med-btn" data-med="Amlodipine 0.625mg">Amlodipine<span class="sub">0.625mg</span></button>
+          <button class="quick-med-btn" data-med="Spironolactone 12.5mg">Spironolactone<span class="sub">12.5mg</span></button>
+        </div>
+        <div class="quick-med-row">
+          <button class="quick-med-btn" data-med="Miralax 1/4 tsp">Miralax<span class="sub">1/4 tsp</span></button>
+          <button class="quick-med-btn" data-med="Potassium">Potassium</button>
+          <button class="quick-med-btn" data-med="Mirtazapine">Mirtazapine</button>
+        </div>
       </div>
       <div class="med-add-row">
         <input class="medinput" id="medInput" list="medHistoryList" placeholder="Or type another med + dose">
